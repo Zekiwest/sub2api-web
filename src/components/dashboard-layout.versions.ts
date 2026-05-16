@@ -5,32 +5,16 @@
  * To stop versioning this component, run: npx uifork promote dashboard-layout <version-id>
  */
 import { DashboardLayout as DashboardLayoutV1 } from "./dashboard-layout.v1"
-import { DashboardLayout as DashboardLayoutV2 } from "./dashboard-layout.v2"
 import { DashboardLayout as DashboardLayoutV3 } from "./dashboard-layout.v3"
-import { DashboardLayout as DashboardLayoutV4 } from "./dashboard-layout.v4"
-import { DashboardLayout as DashboardLayoutV5 } from "./dashboard-layout.v5"
 export const VERSIONS = {
   "v1": {
     render: DashboardLayoutV1,
     label: "HeroUI",
     description: "Original layout with custom sidebar",
   },
-  "v2": {
-    render: DashboardLayoutV2,
-    label: "shadcn Sidebar",
-    description: "New layout with shadcn sidebar and Classic Elegant theme",
-  },
   "v3": {
     render: DashboardLayoutV3,
     label: "Paper Design",
     description: "Layout based on Paper design file with fixed sidebar width and blur header",
-  },
-  "v4": {
-    render: DashboardLayoutV4,
-    label: "",
-  },
-  "v5": {
-    render: DashboardLayoutV5,
-    label: "",
   },
 }

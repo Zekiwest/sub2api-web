@@ -1,3 +1,16 @@
+/**
+ * ============================================================================
+ * GEB L3 文件级自指注释块
+ * ============================================================================
+ * 文件作用: 全局样式定义，包含 Tailwind CSS 变量和主题配置
+ * 依赖关系: tailwindcss, layout.tsx (--font-sans 引用)
+ * 变更同步:
+ *   - 主题颜色变化时，需同步 :root 和 .dark
+ *   - 字体配置变化时，需同步 layout.tsx next/font 导入
+ * 版本记录:
+ *   - 2026-05-16: Montserrat + PingFang SC fallback (中英双语支持)
+ * ============================================================================
+ */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -37,8 +50,8 @@
   --sidebar-accent-foreground: #f2ecd9;
   --sidebar-border: #e5e3dc;
   --sidebar-ring: #c91d2b;
-  --font-sans: Garamond, 'Hoefler Text', 'Times New Roman', serif;
-  --font-serif: Garamond, serif;
+  --font-sans: 'Montserrat', 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --font-serif: 'Montserrat', 'PingFang SC', sans-serif;
   --font-mono: monospace;
   --radius: 0.125rem;
   --shadow-x: 0px;
@@ -92,8 +105,8 @@
   --sidebar-accent-foreground: #e8ba30;
   --sidebar-border: #1f2e25;
   --sidebar-ring: #cfa117;
-  --font-sans: Garamond, 'Hoefler Text', 'Times New Roman', serif;
-  --font-serif: Garamond, serif;
+  --font-sans: 'Montserrat', 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --font-serif: 'Montserrat', 'PingFang SC', sans-serif;
   --font-mono: monospace;
   --radius: 0.125rem;
   --shadow-x: 0px;

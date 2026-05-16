@@ -3,10 +3,12 @@
  * GEB L3 文件级自指注释块
  * ============================================================================
  * 文件作用: Header 组件 - Paper Design 版本 (v2)
- * 依赖关系: ui/dropdown-menu, stores/auth, lucide-react
+ * 依赖关系: ui/dropdown-menu, stores/auth, stores/locale, lib/i18n, language-switcher, lucide-react
  * 变更同步:
- *   - 页面标题变化时，需同步 pageTitleMap
+ *   - 页面标题变化时，需同步 header 翻译键
  *   - 样式变化时，需对照 Paper 设计文件
+ * 版本记录:
+ *   - 2026-05-16: 添加语言切换支持 (中英双语)
  * ============================================================================
  */
 
@@ -15,8 +17,10 @@
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth';
+import { useTranslation } from '@/lib/i18n';
 import { authApi } from '@/lib/auth';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { LanguageSwitcher } from '@/components/language-switcher';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,10 +31,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { BellIcon, SettingsIcon, LogOutIcon, DollarSignIcon } from 'lucide-react';
 
-const pageTitleMap: Record<string, string> = {
-  '/dashboard': 'Dashboard',
-  '/keys': 'API Keys',
-  '/usage': 'Usage Logs',
+const pageKeyMap: Record<string, string> = {
+  '/dashboard': 'header.dashboard',
+  '/keys': 'header.apiKeys',
+  '/usage': 'header.usage',
 };
 
 interface SiteHeaderV2Props {
@@ -41,8 +45,9 @@ export function SiteHeaderV2({ sidebarWidth }: SiteHeaderV2Props) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const { translate } = useTranslation();
 
-  const pageTitle = pageTitleMap[pathname] || 'Dashboard';
+  const pageTitle = translate(pageKeyMap[pathname] || 'header.dashboard');
 
   const handleLogout = async () => {
     await authApi.logout();
@@ -72,6 +77,9 @@ export function SiteHeaderV2({ sidebarWidth }: SiteHeaderV2Props) {
       </h1>
 
       <div className="flex items-center gap-3">
+        {/* Language Switcher */}
+        <LanguageSwitcher />
+
         {/* Notifications */}
         <button className="rounded-xs p-2 hover:bg-gray-100 transition-colors">
           <BellIcon className="h-5 w-5" style={{ color: '#4A5565' }} />
@@ -104,11 +112,11 @@ export function SiteHeaderV2({ sidebarWidth }: SiteHeaderV2Props) {
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2">
               <DollarSignIcon className="h-4 w-4" />
-              <span>Balance: ${user?.balance?.toFixed(2) || '0.00'}</span>
+              <span>{translate('dashboard.balance')}: ${user?.balance?.toFixed(2) || '0.00'}</span>
             </DropdownMenuItem>
             <DropdownMenuItem className="gap-2">
               <SettingsIcon className="h-4 w-4" />
-              <span>Settings</span>
+              <span>{translate('common.settings')}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -116,7 +124,7 @@ export function SiteHeaderV2({ sidebarWidth }: SiteHeaderV2Props) {
               onClick={handleLogout}
             >
               <LogOutIcon className="h-4 w-4" />
-              <span>Log out</span>
+              <span>{translate('common.logout')}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

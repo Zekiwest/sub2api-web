@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 
 export default function HomePage() {
   return (
@@ -15,16 +15,12 @@ export default function HomePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center gap-4 p-6">
-          <Button asChild>
-            <Link href="/login">
-              Login
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/register">
-              Register
-            </Link>
-          </Button>
+          <Link href="/login" className={buttonVariants({ variant: 'default' })}>
+            Login
+          </Link>
+          <Link href="/register" className={buttonVariants({ variant: 'outline' })}>
+            Register
+          </Link>
         </CardContent>
       </Card>
     </div>

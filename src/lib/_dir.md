@@ -1,7 +1,7 @@
 # _dir.md - src/lib 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-14
+> 最后更新: 2026-05-16
 
 ## 目录目的
 
@@ -15,6 +15,8 @@
 | `auth.ts` | 认证 API | `/auth/*` | login/register pages |
 | `keys.ts` | API Key CRUD | `/keys` | keys page |
 | `usage.ts` | 使用统计 API | `/usage/*` | dashboard/usage pages |
+| `utils.ts` | 工具函数 | - | 多处引用 |
+| `i18n/` | 国际化模块 | - | 所有页面/组件 |
 
 ## API 模块详情
 
@@ -47,6 +49,12 @@ const api = axios.create({
 - `getDashboardTrend(params)` → GET `/usage/dashboard/trend`
 - `getDashboardModels()` → GET `/usage/dashboard/models`
 
+### i18n/ (国际化)
+- `useTranslation()` hook - 获取 `translate` 函数和 `locale`
+- `en.json` - 英文翻译字典
+- `zh.json` - 中文翻译字典
+- 支持嵌套键访问: `translate('header.dashboard')`
+
 ## 依赖关系
 
 ```mermaid
@@ -59,12 +67,21 @@ graph TD
     KEYS --> T
     USAGE --> T
     
+    I18N[i18n/index.ts] --> LS[stores/locale.ts]
+    EN[i18n/en.json] --> I18N
+    ZH[i18n/zh.json] --> I18N
+    
     LP[login page] --> AUTH
+    LP --> I18N
     RP[register page] --> AUTH
+    RP --> I18N
     KP[keys page] --> KEYS
+    KP --> I18N
     DP[dashboard page] --> USAGE
+    DP --> I18N
     UP[usage page] --> USAGE
     UP --> KEYS
+    UP --> I18N
 ```
 
 ## GEB 自指规则

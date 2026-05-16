@@ -1,3 +1,14 @@
+/**
+ * ============================================================================
+ * GEB L3 文件级自指注释块
+ * ============================================================================
+ * 文件作用: 应用侧边栏组件，包含导航菜单
+ * 依赖关系: stores/locale.ts, lib/i18n, ui/sidebar, stores/auth
+ * 变更同步:
+ *   - 导航项变化时，需更新翻译文件 header 部分
+ * ============================================================================
+ */
+
 'use client';
 
 import Link from 'next/link';
@@ -18,33 +29,35 @@ import {
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuthStore } from '@/stores/auth';
+import { useTranslation } from '@/lib/i18n';
 import {
   ChartBarIcon,
   KeyIcon,
   TrendingUpIcon,
 } from 'lucide-react';
 
-const navItems = [
-  {
-    path: '/dashboard',
-    label: 'Dashboard',
-    icon: ChartBarIcon,
-  },
-  {
-    path: '/keys',
-    label: 'API Keys',
-    icon: KeyIcon,
-  },
-  {
-    path: '/usage',
-    label: 'Usage',
-    icon: TrendingUpIcon,
-  },
-];
-
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const { user, isAuthenticated } = useAuthStore();
+  const { translate } = useTranslation();
+
+  const navItems = [
+    {
+      path: '/dashboard',
+      label: translate('header.dashboard'),
+      icon: ChartBarIcon,
+    },
+    {
+      path: '/keys',
+      label: translate('header.apiKeys'),
+      icon: KeyIcon,
+    },
+    {
+      path: '/usage',
+      label: translate('header.usage'),
+      icon: TrendingUpIcon,
+    },
+  ];
 
   if (!isAuthenticated) {
     return null;
@@ -55,16 +68,17 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href="/dashboard">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-sm bg-gradient-to-br from-primary to-sidebar-accent text-primary-foreground">
-                  <span className="text-sm font-bold">S2</span>
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Sub2API</span>
-                  <span className="truncate text-xs text-muted-foreground">AI Gateway</span>
-                </div>
-              </Link>
+            <SidebarMenuButton
+              size="lg"
+              render={<Link href="/dashboard" />}
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-sm bg-gradient-to-br from-primary to-sidebar-accent text-primary-foreground">
+                <span className="text-sm font-bold">S2</span>
+              </div>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-semibold">Sub2API</span>
+                <span className="truncate text-xs text-muted-foreground">AI Gateway</span>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -80,14 +94,12 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton
-                    asChild
+                    render={<Link href={item.path} />}
                     isActive={pathname === item.path}
                     tooltip={item.label}
                   >
-                    <Link href={item.path}>
-                      <item.icon className="size-4" />
-                      <span>{item.label}</span>
-                    </Link>
+                    <item.icon className="size-4" />
+                    <span>{item.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

@@ -1,11 +1,11 @@
 # PROJECT_INDEX.md - GEB L1 项目索引
 
 > **本文件是 GEB L1 索引，任何项目结构或重要文件变更后必须更新我**
-> 最后更新: 2026-05-14
+> 最后更新: 2026-05-16
 
 ## 项目概述
 
-Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API Key 管理和 Token 使用追踪功能。采用现代 HeroUI 组件库构建，提供美观的用户界面。
+Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API Key 管理和 Token 使用追踪功能。采用现代 shadcn/ui 组件库构建，支持中英双语切换。
 
 ## 架构概述
 
@@ -13,16 +13,17 @@ Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API K
 ┌─────────────────────────────────────────────────────────────┐
 │                     Browser (React App)                      │
 ├─────────────────────────────────────────────────────────────┤
-│  Pages (App Router)    │  Components  │  Stores (Zustand)   │
-│  - /                   │  - Sidebar   │  - auth.ts          │
-│  - /login              │  - Layout    │                     │
-│  - /register           │              │                     │
-│  - /dashboard          │              │                     │
-│  - /keys               │              │                     │
-│  - /usage              │              │                     │
+│  Pages (App Router)    │  Components       │  Stores        │
+│  - /                   │  - Sidebar (v2)   │  - auth.ts      │
+│  - /login              │  - Header (v2)    │  - locale.ts    │
+│  - /register           │  - LanguageSwitch │                 │
+│  - /dashboard          │  - Layout         │                 │
+│  - /keys               │                   │                 │
+│  - /usage              │                   │                 │
 ├─────────────────────────────────────────────────────────────┤
-│                 Lib Layer (API Clients)                      │
-│  - auth.ts (认证)     │  - keys.ts (API Key) │  - usage.ts │
+│                 Lib Layer (API + i18n)                       │
+│  - auth.ts (认证)     │  - keys.ts (Key)  │  - usage.ts     │
+│  - i18n/ (翻译系统)   │  - en.json        │  - zh.json      │
 ├─────────────────────────────────────────────────────────────┤
 │                     Types (index.ts)                         │
 │  - User, ApiKey, UsageLog, DashboardStats, etc.              │
@@ -37,12 +38,13 @@ Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API K
 | 层级 | 技术 | 版本 |
 |------|------|------|
 | 框架 | Next.js (App Router) | 15.2.4 |
-| UI库 | HeroUI React | 3.0.4 |
+| UI库 | shadcn/ui (Base UI) | 4.7.0 |
 | 样式 | Tailwind CSS | 4.0 |
 | 状态 | Zustand | 4.5.0 |
 | HTTP | Axios | 1.6.0 |
-| 图表 | Recharts | 2.10.0 |
+| 图表 | Recharts | 3.8.0 |
 | 通知 | react-hot-toast | 2.4.0 |
+| 字体 | Montserrat + PingFang SC | - |
 | 语言 | TypeScript | 5.4.0 |
 
 ## 依赖关系图 (Mermaid)
@@ -59,14 +61,16 @@ graph TD
     end
 
     subgraph Components
-        C1[sidebar.tsx]
+        C1[sidebar.v2.tsx]
         C2[dashboard-layout.tsx]
-        C3[providers.tsx]
-        C4[nav.tsx]
+        C3[site-header.v2.tsx]
+        C4[language-switcher.tsx]
+        C5[providers.tsx]
     end
 
     subgraph Stores
         S1[auth.ts]
+        S2[locale.ts]
     end
 
     subgraph Lib
@@ -74,6 +78,9 @@ graph TD
         L2[keys.ts - Key API]
         L3[usage.ts - 使用API]
         L4[api.ts - Axios配置]
+        L5[i18n/index.ts]
+        L6[i18n/en.json]
+        L7[i18n/zh.json]
     end
 
     subgraph Types
@@ -82,21 +89,33 @@ graph TD
 
     P2 --> S1
     P2 --> L1
+    P2 --> L5
     P3 --> S1
     P3 --> L1
+    P3 --> L5
     P4 --> C2
     P4 --> S1
     P4 --> L3
+    P4 --> L5
     P5 --> C2
     P5 --> S1
     P5 --> L2
+    P5 --> L5
     P6 --> C2
     P6 --> S1
     P6 --> L3
-    P6 --> L2
+    P6 --> L5
 
     C2 --> C1
+    C2 --> C3
     C1 --> S1
+    C1 --> S2
+    C1 --> L5
+    C3 --> S1
+    C3 --> S2
+    C3 --> L5
+    C3 --> C4
+    C4 --> S2
 
     L1 --> L4
     L2 --> L4
@@ -114,25 +133,35 @@ graph TD
 src/
 ├── app/              # Next.js App Router 页面
 │   ├── page.tsx      # 首页 (登录入口)
-│   ├── layout.tsx    # 根布局
-│   ├── globals.css   # 全局样式
+│   ├── layout.tsx    # 根布局 (字体配置)
+│   ├── globals.css   # 全局样式 (CSS变量)
 │   ├── login/        # 登录页
 │   ├── register/     # 注册页
 │   ├── dashboard/    # Dashboard (统计图表)
 │   ├── keys/         # API Key 管理
 │   └── usage/        # 使用日志
 ├── components/       # React 组件
-│   ├── sidebar.tsx   # SaaS 左侧栏
-│   ├── dashboard-layout.tsx # 布局容器
-│   ├── providers.tsx # HeroUI Provider
-│   └── nav.tsx       # 导航组件
+│   ├── sidebar.v2.tsx   # Sidebar (Paper Design)
+│   ├── site-header.v2.tsx # Header (Paper Design)
+│   ├── language-switcher.tsx # 语言切换按钮
+│   ├── dashboard-layout.tsx # 布局容器 (uifork)
+│   ├── providers.tsx    # HeroUI Provider
+│   └── ui/              # shadcn/ui 组件库
 ├── stores/           # Zustand 状态
-│   └── auth.ts       # 认证状态
+│   ├── auth.ts       # 认证状态
+│   └── locale.ts     # 语言状态
 ├── lib/              # 工具/API
 │   ├── api.ts        # Axios 配置
 │   ├── auth.ts       # 认证 API
 │   ├── keys.ts       # Key CRUD
-│   └── usage.ts      # 使用统计 API
+│   ├── usage.ts      # 使用统计 API
+│   ├── i18n/         # 国际化
+│   │   ├── index.ts  # useTranslation hook
+│   │   ├── en.json   # 英文翻译
+│   │   └── zh.json   # 中文翻译
+│   └── utils.ts      # 工具函数
+├── hooks/            # React Hooks
+│   └── use-mobile.ts # 移动端检测
 └── types/            # TypeScript 类型
     └── index.ts      # 全局类型定义
 ```
@@ -144,9 +173,10 @@ src/
 | `src/types/index.ts` | 全局类型定义，所有 API/组件依赖 | ⭐⭐⭐ |
 | `src/lib/api.ts` | Axios 客户端配置，所有 API 基础 | ⭐⭐⭐ |
 | `src/stores/auth.ts` | 认证状态，控制登录态 | ⭐⭐⭐ |
-| `src/components/dashboard-layout.tsx` | SaaS 布局骨架 | ⭐⭐ |
-| `src/app/login/page.tsx` | 登录入口 | ⭐⭐ |
-| `src/app/keys/page.tsx` | API Key CRUD | ⭐⭐ |
+| `src/stores/locale.ts` | 语言状态，控制界面语言 | ⭐⭐⭐ |
+| `src/lib/i18n/index.ts` | 翻译系统核心 | ⭐⭐⭐ |
+| `src/components/sidebar.v2.tsx` | Sidebar (Paper Design) | ⭐⭐ |
+| `src/components/site-header.v2.tsx` | Header (Paper Design) | ⭐⭐ |
 
 ## API 端点映射
 
@@ -169,4 +199,4 @@ src/
 
 ---
 
-*生成于 GEB 分型初始化 - 下一步运行 `/geb-check` 验证完整性*
+*生成于 GEB 分型初始化 - 运行 `/geb-check` 验证完整性*

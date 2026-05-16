@@ -5,9 +5,9 @@
  * GEB L3 文件级自指注释块
  * ============================================================================
  * 文件作用: API Key 管理页面，提供 CRUD 操作界面
- * 依赖关系: components/dashboard-layout.tsx, lib/keys.ts, stores/auth.ts, shadcn Dialog
+ * 依赖关系: components/dashboard-layout.tsx, lib/keys.ts, stores/auth.ts, lib/i18n, shadcn Dialog
  * 变更同步:
- *   - Key 操作功能变化时，需更新本文件
+ *   - Key 操作功能变化时，需更新本文件及 keys 翻译键
  *   - Dialog 结构变化时，需检查 shadcn 版本兼容性
  * ============================================================================
  */
@@ -37,6 +37,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { keysApi } from '@/lib/keys';
 import { useAuthStore } from '@/stores/auth';
+import { useTranslation } from '@/lib/i18n';
 import toast from 'react-hot-toast';
 import type { ApiKey, CreateApiKeyRequest } from '@/types';
 import { format } from 'date-fns';
@@ -44,6 +45,7 @@ import { CopyIcon, EditIcon, TrashIcon, PlusIcon } from 'lucide-react';
 
 export default function KeysPage() {
   const { isAuthenticated, checkAuth } = useAuthStore();
+  const { translate } = useTranslation();
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedKey, setSelectedKey] = useState<ApiKey | null>(null);
@@ -61,6 +63,11 @@ export default function KeysPage() {
   const [editKeyQuota, setEditKeyQuota] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
 
+  // Delete dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [keyToDelete, setKeyToDelete] = useState<ApiKey | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
@@ -77,7 +84,7 @@ export default function KeysPage() {
       const response = await keysApi.list(1, 100);
       setKeys(response.items);
     } catch (error) {
-      toast.error('Failed to load API keys');
+      toast.error(translate('keys.loadError'));
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +92,7 @@ export default function KeysPage() {
 
   const handleCreate = async () => {
     if (!newKeyName.trim()) {
-      toast.error('Please enter a name');
+      toast.error(translate('keys.nameRequired'));
       return;
     }
 
@@ -97,14 +104,14 @@ export default function KeysPage() {
         expires_in_days: newKeyExpiry ? parseInt(newKeyExpiry) : undefined,
       };
       await keysApi.create(payload);
-      toast.success('API key created successfully');
+      toast.success(translate('keys.createSuccess'));
       setCreateDialogOpen(false);
       setNewKeyName('');
       setNewKeyQuota('');
       setNewKeyExpiry('');
       loadKeys();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to create key');
+      toast.error(error.message || translate('keys.createError'));
     } finally {
       setIsCreating(false);
     }
@@ -119,25 +126,35 @@ export default function KeysPage() {
         name: editKeyName,
         quota: editKeyQuota ? parseFloat(editKeyQuota) : undefined,
       });
-      toast.success('API key updated successfully');
+      toast.success(translate('keys.updateSuccess'));
       setEditDialogOpen(false);
       loadKeys();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to update key');
+      toast.error(error.message || translate('keys.updateError'));
     } finally {
       setIsUpdating(false);
     }
   };
 
-  const handleDelete = async (key: ApiKey) => {
-    if (!confirm('Are you sure you want to delete this key?')) return;
+  const openDeleteDialog = (key: ApiKey) => {
+    setKeyToDelete(key);
+    setDeleteDialogOpen(true);
+  };
 
+  const handleDelete = async () => {
+    if (!keyToDelete) return;
+
+    setIsDeleting(true);
     try {
-      await keysApi.delete(key.id);
-      toast.success('API key deleted');
+      await keysApi.delete(keyToDelete.id);
+      toast.success(translate('keys.deleteSuccess'));
+      setDeleteDialogOpen(false);
+      setKeyToDelete(null);
       loadKeys();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to delete key');
+      toast.error(error.message || translate('keys.deleteError'));
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -145,16 +162,16 @@ export default function KeysPage() {
     const newStatus = key.status === 'active' ? 'inactive' : 'active';
     try {
       await keysApi.toggleStatus(key.id, newStatus);
-      toast.success(`Key ${newStatus === 'active' ? 'activated' : 'deactivated'}`);
+      toast.success(translate(newStatus === 'active' ? 'keys.activated' : 'keys.deactivated'));
       loadKeys();
     } catch (error: any) {
-      toast.error(error.message || 'Failed to toggle status');
+      toast.error(error.message || translate('keys.toggleError'));
     }
   };
 
   const handleCopyKey = (key: string) => {
     navigator.clipboard.writeText(key);
-    toast.success('Key copied to clipboard');
+    toast.success(translate('keys.copySuccess'));
   };
 
   const openEditDialog = (key: ApiKey) => {
@@ -173,12 +190,12 @@ export default function KeysPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>API Keys</CardTitle>
-            <CardDescription>Manage your API keys</CardDescription>
+            <CardTitle>{translate('keys.title')}</CardTitle>
+            <CardDescription>{translate('keys.desc')}</CardDescription>
           </div>
           <Button onClick={() => setCreateDialogOpen(true)}>
             <PlusIcon className="h-4 w-4 mr-2" />
-            Create New Key
+            {translate('keys.createNew')}
           </Button>
         </CardHeader>
         {isLoading ? (
@@ -187,21 +204,21 @@ export default function KeysPage() {
           </CardContent>
         ) : keys.length === 0 ? (
           <CardContent className="text-center text-muted-foreground p-10">
-            No API keys found. Create one to get started.
+            {translate('keys.noKeys')}
           </CardContent>
         ) : (
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Key</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Quota</TableHead>
-                  <TableHead>Used</TableHead>
-                  <TableHead>Expires</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{translate('keys.name')}</TableHead>
+                  <TableHead>{translate('keys.key')}</TableHead>
+                  <TableHead>{translate('keys.status')}</TableHead>
+                  <TableHead>{translate('keys.quota')}</TableHead>
+                  <TableHead>{translate('keys.used')}</TableHead>
+                  <TableHead>{translate('keys.expires')}</TableHead>
+                  <TableHead>{translate('keys.created')}</TableHead>
+                  <TableHead>{translate('keys.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -220,12 +237,12 @@ export default function KeysPage() {
                     </TableCell>
                     <TableCell>
                       <Badge variant={key.status === 'active' ? 'default' : 'secondary'}>
-                        {key.status}
+                        {translate(`keys.${key.status}`)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{key.quota > 0 ? `$${key.quota.toFixed(2)}` : 'Unlimited'}</TableCell>
+                    <TableCell>{key.quota > 0 ? `$${key.quota.toFixed(2)}` : translate('keys.unlimited')}</TableCell>
                     <TableCell>{`$${key.used_quota?.toFixed(2) || '0.00'}`}</TableCell>
-                    <TableCell>{key.expires_at ? format(new Date(key.expires_at), 'yyyy-MM-dd') : 'Never'}</TableCell>
+                    <TableCell>{key.expires_at ? format(new Date(key.expires_at), 'yyyy-MM-dd') : translate('keys.never')}</TableCell>
                     <TableCell>{format(new Date(key.created_at), 'yyyy-MM-dd HH:mm')}</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
@@ -233,9 +250,9 @@ export default function KeysPage() {
                           <EditIcon className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="icon-sm" onClick={() => handleToggleStatus(key)}>
-                          {key.status === 'active' ? 'Disable' : 'Enable'}
+                          {key.status === 'active' ? translate('keys.disable') : translate('keys.enable')}
                         </Button>
-                        <Button variant="ghost" size="icon-sm" className="text-destructive" onClick={() => handleDelete(key)}>
+                        <Button variant="ghost" size="icon-sm" className="text-destructive" onClick={() => openDeleteDialog(key)}>
                           <TrashIcon className="h-4 w-4" />
                         </Button>
                       </div>
@@ -252,33 +269,33 @@ export default function KeysPage() {
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New API Key</DialogTitle>
-            <DialogDescription>Enter the details for your new API key</DialogDescription>
+            <DialogTitle>{translate('keys.createTitle')}</DialogTitle>
+            <DialogDescription>{translate('keys.createDesc')}</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-4">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Name *</label>
+              <label className="text-sm font-medium">{translate('keys.nameLabel')} *</label>
               <Input
                 type="text"
-                placeholder="Enter key name"
+                placeholder={translate('keys.namePlaceholder')}
                 value={newKeyName}
                 onChange={(e) => setNewKeyName(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Quota (USD)</label>
+              <label className="text-sm font-medium">{translate('keys.quotaLabel')}</label>
               <Input
                 type="number"
-                placeholder="0 = unlimited"
+                placeholder={translate('keys.quotaPlaceholder')}
                 value={newKeyQuota}
                 onChange={(e) => setNewKeyQuota(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Expires in (days)</label>
+              <label className="text-sm font-medium">{translate('keys.expiryLabel')}</label>
               <Input
                 type="number"
-                placeholder="Leave empty for no expiry"
+                placeholder={translate('keys.expiryPlaceholder')}
                 value={newKeyExpiry}
                 onChange={(e) => setNewKeyExpiry(e.target.value)}
               />
@@ -286,10 +303,10 @@ export default function KeysPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
-              Cancel
+              {translate('keys.cancel')}
             </Button>
             <Button disabled={isCreating} onClick={handleCreate}>
-              {isCreating ? 'Creating...' : 'Create'}
+              {isCreating ? translate('keys.creating') : translate('keys.create')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -299,24 +316,24 @@ export default function KeysPage() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit API Key</DialogTitle>
-            <DialogDescription>Update the API key settings</DialogDescription>
+            <DialogTitle>{translate('keys.editTitle')}</DialogTitle>
+            <DialogDescription>{translate('keys.editDesc')}</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-4">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Name *</label>
+              <label className="text-sm font-medium">{translate('keys.nameLabel')} *</label>
               <Input
                 type="text"
-                placeholder="Enter key name"
+                placeholder={translate('keys.namePlaceholder')}
                 value={editKeyName}
                 onChange={(e) => setEditKeyName(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium">Quota (USD)</label>
+              <label className="text-sm font-medium">{translate('keys.quotaLabel')}</label>
               <Input
                 type="number"
-                placeholder="0 = unlimited"
+                placeholder={translate('keys.quotaPlaceholder')}
                 value={editKeyQuota}
                 onChange={(e) => setEditKeyQuota(e.target.value)}
               />
@@ -324,10 +341,30 @@ export default function KeysPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-              Cancel
+              {translate('keys.cancel')}
             </Button>
             <Button disabled={isUpdating} onClick={handleUpdate}>
-              {isUpdating ? 'Saving...' : 'Save'}
+              {isUpdating ? translate('keys.saving') : translate('keys.save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{translate('keys.deleteTitle')}</DialogTitle>
+            <DialogDescription>
+              {translate('keys.deleteDesc')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              {translate('keys.cancel')}
+            </Button>
+            <Button variant="destructive" disabled={isDeleting} onClick={handleDelete}>
+              {isDeleting ? translate('keys.deleting') : translate('keys.delete')}
             </Button>
           </DialogFooter>
         </DialogContent>
