@@ -11,7 +11,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <TooltipProvider>
       {children}
       {showUIFork && <UIFork />}
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          success: {
+            iconTheme: {
+              primary: '#1f5134',
+              secondary: '#f2ecd9',
+            },
+          },
+        }}
+      />
     </TooltipProvider>
   );
 }

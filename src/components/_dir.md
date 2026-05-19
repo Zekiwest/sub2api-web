@@ -1,7 +1,7 @@
 # _dir.md - src/components 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-16
+> 最后更新: 2026-05-18
 
 ## 目录目的
 
@@ -15,8 +15,12 @@
 | `site-header.v2.tsx` | Header (Paper Design) | `user` state | Header + 语言切换 | `dashboard-layout.tsx` |
 | `language-switcher.tsx` | 语言切换下拉 | `locale` state | 🇺🇸/🇨🇳 切换 | `site-header.v2.tsx` |
 | `dashboard-layout.tsx` | Dashboard 布局容器 | children | Sidebar + Header + Main | 所有认证页面 |
-| `providers.tsx` | shadcn/ui Provider 包装 | children | Base UI 上下文 | `app/layout.tsx` |
-| `ui/` | shadcn/ui 组件库 | - | Button, Card, Dialog 等 | 多处引用 |
+| `providers.tsx` | Provider 包装 (toast + uifork) | children | Toast 上下文 | `app/layout.tsx` |
+| `ui/` | shadcn/ui + 自定义组件 | - | Button, Card, KPI 等 | 多处引用 |
+
+## 子目录索引
+
+- **[ui/_dir.md](ui/_dir.md)** - shadcn/ui 基础组件 + Tremor 风格自定义组件
 
 ## 组件依赖图
 
@@ -38,6 +42,10 @@ graph TD
     LS --> LC
     
     DL --> PAGES[dashboard/keys/usage pages]
+    
+    UI[ui/*] --> DL
+    KPI[ui/kpi-card.tsx] --> DASH[dashboard/page.tsx]
+    SPARK[ui/spark-chart.tsx] --> KPI
 ```
 
 ## 关键设计
@@ -65,6 +73,15 @@ graph TD
 - 语言选项: English (🇺🇸), 中文 (🇨🇳)
 - 使用 `useLocaleStore` 切换语言
 
+### ui/kpi-card.tsx (Tremor Blocks 风格)
+- 大数字 + 趋势百分比指示 (↑绿/↓红)
+- Lucide React 图标支持
+- 嵌入 SparkChart 迷你趋势图
+
+### ui/spark-chart.tsx
+- SparkAreaChart / SparkLineChart / SparkBarChart
+- 嵌入 KPI 卡片展示趋势
+
 ## GEB 自指规则
 
 当发生以下变更时，必须更新本文件：
@@ -72,3 +89,4 @@ graph TD
 - 组件功能用途发生变化
 - 组件依赖关系变化
 - Paper 设计样式变化需同步组件样式
+- ui/ 目录新增组件需同步 ui/_dir.md

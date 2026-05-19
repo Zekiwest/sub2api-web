@@ -44,7 +44,15 @@
     "usageTrend": "使用趋势",
     "last7Days": "最近 7 天",
     "topModels": "热门模型",
-    "chartPlaceholder": "图表将使用 shadcn chart 实现"
+    "chartPlaceholder": "图表将使用 shadcn chart 实现",
+    "tokenDistribution": "Token 分布",
+    "cacheCreation": "缓存创建",
+    "cacheRead": "缓存读取",
+    "costByModel": "模型费用排行",
+    "requestsByModel": "模型请求分布",
+    "vsLastWeek": "对比上周",
+    "averageDuration": "平均响应时间",
+    "milliseconds": "毫秒"
   },
   "keys": {
     "title": "API 密钥",

@@ -1,7 +1,7 @@
 # _dir.md - src/lib/i18n 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-16
+> 最后更新: 2026-05-18
 
 ## 目录目的
 
@@ -34,7 +34,11 @@ export function useTranslation() {
 {
   "common": { "login", "register", "logout" },
   "auth": { "loginTitle", "email", "password" },
-  "dashboard": { "title", "welcome", "totalApiKeys" },
+  "dashboard": {
+    "title", "welcome", "totalApiKeys", "totalRequests", "totalTokens", "totalCost",
+    "usageTrend", "last7Days", "requestsByModel", "tokenDistribution", "costByModel",
+    "vsLastWeek", "averageDuration", "milliseconds", "cacheCreation", "cacheRead"
+  },
   "keys": { "title", "createNew", "name", "status" },
   "usage": { "title", "model", "tokens", "cost" },
   "header": { "dashboard", "apiKeys", "usage" },
@@ -52,6 +56,8 @@ graph TD
     ZH[zh.json] --> I
     
     PAGES[所有页面] --> I
+    DASH[dashboard/page.tsx] --> I
+    KPI[ui/kpi-card.tsx] --> I
     SIDEBAR[sidebar.v2.tsx] --> I
     HEADER[site-header.v2.tsx] --> I
     SWITCH[language-switcher.tsx] --> LS
@@ -63,3 +69,4 @@ graph TD
 - 新增翻译键（需更新 en.json 和 zh.json 同步）
 - 新增语言文件（如 ja.json）
 - `useTranslation` hook 接口变化
+- dashboard 相关图表翻译键变化

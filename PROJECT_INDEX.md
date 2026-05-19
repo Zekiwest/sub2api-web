@@ -1,11 +1,11 @@
 # PROJECT_INDEX.md - GEB L1 项目索引
 
 > **本文件是 GEB L1 索引，任何项目结构或重要文件变更后必须更新我**
-> 最后更新: 2026-05-16
+> 最后更新: 2026-05-18
 
 ## 项目概述
 
-Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API Key 管理和 Token 使用追踪功能。采用现代 shadcn/ui 组件库构建，支持中英双语切换。
+Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API Key 管理和 Token 使用追踪功能。采用现代 shadcn/ui 组件库构建，支持中英双语切换。Dashboard 采用 Tremor Blocks 风格的 KPI 组件。
 
 ## 架构概述
 
@@ -13,20 +13,20 @@ Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API K
 ┌─────────────────────────────────────────────────────────────┐
 │                     Browser (React App)                      │
 ├─────────────────────────────────────────────────────────────┤
-│  Pages (App Router)    │  Components       │  Stores        │
-│  - /                   │  - Sidebar (v2)   │  - auth.ts      │
-│  - /login              │  - Header (v2)    │  - locale.ts    │
-│  - /register           │  - LanguageSwitch │                 │
-│  - /dashboard          │  - Layout         │                 │
-│  - /keys               │                   │                 │
-│  - /usage              │                   │                 │
+│  Pages (App Router)    │  Components         │  Stores      │
+│  - /                   │  - Sidebar (v2)     │  - auth.ts    │
+│  - /login              │  - Header (v2)      │  - locale.ts  │
+│  - /register           │  - LanguageSwitch   │              │
+│  - /dashboard          │  - Layout           │              │
+│  - /keys               │  - KPICard (Tremor) │              │
+│  - /usage              │  - SparkChart       │              │
 ├─────────────────────────────────────────────────────────────┤
 │                 Lib Layer (API + i18n)                       │
 │  - auth.ts (认证)     │  - keys.ts (Key)  │  - usage.ts     │
 │  - i18n/ (翻译系统)   │  - en.json        │  - zh.json      │
 ├─────────────────────────────────────────────────────────────┤
 │                     Types (index.ts)                         │
-│  - User, ApiKey, UsageLog, DashboardStats, etc.              │
+│  - User, ApiKey, UsageLog, DashboardStats, TrendData, etc.  │
 ├─────────────────────────────────────────────────────────────┤
 │                   Backend API (Go + Gin)                     │
 │  REST API: /api/v1/auth, /api/v1/keys, /api/v1/usage        │
@@ -44,6 +44,7 @@ Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API K
 | HTTP | Axios | 1.6.0 |
 | 图表 | Recharts | 3.8.0 |
 | 通知 | react-hot-toast | 2.4.0 |
+| 图标 | Lucide React | 1.16.0 |
 | 字体 | Montserrat + PingFang SC | - |
 | 语言 | TypeScript | 5.4.0 |
 
@@ -66,6 +67,12 @@ graph TD
         C3[site-header.v2.tsx]
         C4[language-switcher.tsx]
         C5[providers.tsx]
+        C6[kpi-card.tsx]
+        C7[spark-chart.tsx]
+    end
+
+    subgraph Hooks
+        H1[use-mobile.ts]
     end
 
     subgraph Stores
@@ -94,6 +101,8 @@ graph TD
     P3 --> L1
     P3 --> L5
     P4 --> C2
+    P4 --> C6
+    P4 --> C7
     P4 --> S1
     P4 --> L3
     P4 --> L5
@@ -111,11 +120,14 @@ graph TD
     C1 --> S1
     C1 --> S2
     C1 --> L5
+    C1 --> H1
     C3 --> S1
     C3 --> S2
     C3 --> L5
     C3 --> C4
     C4 --> S2
+    C6 --> L5
+    C7 --> C6
 
     L1 --> L4
     L2 --> L4
@@ -137,7 +149,7 @@ src/
 │   ├── globals.css   # 全局样式 (CSS变量)
 │   ├── login/        # 登录页
 │   ├── register/     # 注册页
-│   ├── dashboard/    # Dashboard (统计图表)
+│   ├── dashboard/    # Dashboard (KPI + 统计图表)
 │   ├── keys/         # API Key 管理
 │   └── usage/        # 使用日志
 ├── components/       # React 组件
@@ -145,8 +157,12 @@ src/
 │   ├── site-header.v2.tsx # Header (Paper Design)
 │   ├── language-switcher.tsx # 语言切换按钮
 │   ├── dashboard-layout.tsx # 布局容器 (uifork)
-│   ├── providers.tsx    # HeroUI Provider
-│   └── ui/              # shadcn/ui 组件库
+│   ├── providers.tsx    # Provider 配置 (toast + uifork)
+│   └── ui/              # shadcn/ui + 自定义组件
+│       ├── kpi-card.tsx    # KPI 卡片 (Tremor 风格)
+│       ├── spark-chart.tsx # 迷你趋势图
+│       ├── chart.tsx       # Recharts 容器
+│       └── ...             # 其他 shadcn 组件
 ├── stores/           # Zustand 状态
 │   ├── auth.ts       # 认证状态
 │   └── locale.ts     # 语言状态
@@ -159,7 +175,7 @@ src/
 │   │   ├── index.ts  # useTranslation hook
 │   │   ├── en.json   # 英文翻译
 │   │   └── zh.json   # 中文翻译
-│   └── utils.ts      # 工具函数
+│   └── utils.ts      # 工具函数 (cn)
 ├── hooks/            # React Hooks
 │   └── use-mobile.ts # 移动端检测
 └── types/            # TypeScript 类型
@@ -175,6 +191,8 @@ src/
 | `src/stores/auth.ts` | 认证状态，控制登录态 | ⭐⭐⭐ |
 | `src/stores/locale.ts` | 语言状态，控制界面语言 | ⭐⭐⭐ |
 | `src/lib/i18n/index.ts` | 翻译系统核心 | ⭐⭐⭐ |
+| `src/components/ui/kpi-card.tsx` | Tremor 风格 KPI 卡片 | ⭐⭐ |
+| `src/components/ui/spark-chart.tsx` | 迷你趋势图组件 | ⭐⭐ |
 | `src/components/sidebar.v2.tsx` | Sidebar (Paper Design) | ⭐⭐ |
 | `src/components/site-header.v2.tsx` | Header (Paper Design) | ⭐⭐ |
 
@@ -184,7 +202,9 @@ src/
 |----------|----------|------|
 | `/login` | `/auth/login` | 用户登录 |
 | `/register` | `/auth/register` | 用户注册 |
-| `/dashboard` | `/usage/dashboard/*` | 统计数据 |
+| `/dashboard` | `/usage/dashboard/stats` | 统计摘要 |
+| `/dashboard` | `/usage/dashboard/trend` | 7天趋势 |
+| `/dashboard` | `/usage/dashboard/models` | 模型分布 |
 | `/keys` | `/keys` (CRUD) | Key 管理 |
 | `/usage` | `/usage` (logs) | 使用日志 |
 

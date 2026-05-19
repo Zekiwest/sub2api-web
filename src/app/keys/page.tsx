@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import {
   Dialog,
@@ -187,13 +188,13 @@ export default function KeysPage() {
 
   return (
     <DashboardLayout>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+      <Card className="shadow-none ring-1 ring-[#1D3025]/10 rounded-md">
+        <CardHeader className="flex flex-row items-center justify-between px-4 gap-1">
           <div>
-            <CardTitle>{translate('keys.title')}</CardTitle>
-            <CardDescription>{translate('keys.desc')}</CardDescription>
+            <CardTitle className="text-base font-medium text-[#1D3025]">{translate('keys.title')}</CardTitle>
+            <CardDescription className="text-sm text-[#5C7064]">{translate('keys.desc')}</CardDescription>
           </div>
-          <Button onClick={() => setCreateDialogOpen(true)}>
+          <Button variant="success" onClick={() => setCreateDialogOpen(true)}>
             <PlusIcon className="h-4 w-4 mr-2" />
             {translate('keys.createNew')}
           </Button>
@@ -207,53 +208,56 @@ export default function KeysPage() {
             {translate('keys.noKeys')}
           </CardContent>
         ) : (
-          <CardContent>
+          <CardContent className="px-4">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>{translate('keys.name')}</TableHead>
-                  <TableHead>{translate('keys.key')}</TableHead>
-                  <TableHead>{translate('keys.status')}</TableHead>
-                  <TableHead>{translate('keys.quota')}</TableHead>
-                  <TableHead>{translate('keys.used')}</TableHead>
-                  <TableHead>{translate('keys.expires')}</TableHead>
-                  <TableHead>{translate('keys.created')}</TableHead>
-                  <TableHead>{translate('keys.actions')}</TableHead>
+                <TableRow className="border-b border-[#D3DED8]">
+                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.name')}</TableHead>
+                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.key')}</TableHead>
+                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.status')}</TableHead>
+                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.quota')}</TableHead>
+                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.used')}</TableHead>
+                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.expires')}</TableHead>
+                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.created')}</TableHead>
+                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {keys.map((key) => (
-                  <TableRow key={key.id}>
-                    <TableCell className="font-medium">{key.name}</TableCell>
-                    <TableCell>
+                {keys.map((key, index) => (
+                  <TableRow key={key.id} className={index === keys.length - 1 ? 'border-0' : 'border-b border-[#D3DED8]'}>
+                    <TableCell className="p-2 text-sm font-medium text-[#1D3025]">{key.name}</TableCell>
+                    <TableCell className="p-2">
                       <div className="flex items-center gap-2">
-                        <code className="text-xs bg-muted px-2 py-1 rounded truncate max-w-[200px]">
-                          {key.key.substring(0, 20)}...
-                        </code>
-                        <Button variant="ghost" size="icon-sm" onClick={() => handleCopyKey(key.key)}>
-                          <CopyIcon className="h-4 w-4" />
+                        <div className="max-w-[200px] rounded-sm px-2 py-1 bg-[#F1EEE4] overflow-hidden">
+                          <code className="text-xs font-mono text-[#1D3025] truncate block">
+                            {key.key.substring(0, 20)}...
+                          </code>
+                        </div>
+                        <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => handleCopyKey(key.key)}>
+                          <CopyIcon className="h-4 w-4 text-[#1D3025]" />
                         </Button>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Badge variant={key.status === 'active' ? 'default' : 'secondary'}>
+                    <TableCell className="p-2">
+                      <Badge variant={key.status === 'active' ? 'active' : 'inactive'}>
                         {translate(`keys.${key.status}`)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{key.quota > 0 ? `$${key.quota.toFixed(2)}` : translate('keys.unlimited')}</TableCell>
-                    <TableCell>{`$${key.used_quota?.toFixed(2) || '0.00'}`}</TableCell>
-                    <TableCell>{key.expires_at ? format(new Date(key.expires_at), 'yyyy-MM-dd') : translate('keys.never')}</TableCell>
-                    <TableCell>{format(new Date(key.created_at), 'yyyy-MM-dd HH:mm')}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="icon-sm" onClick={() => openEditDialog(key)}>
-                          <EditIcon className="h-4 w-4" />
+                    <TableCell className="p-2 text-sm text-[#1D3025]">{key.quota > 0 ? `$${key.quota.toFixed(2)}` : translate('keys.unlimited')}</TableCell>
+                    <TableCell className="p-2 text-sm text-[#1D3025]">{`$${key.used_quota?.toFixed(2) || '0.00'}`}</TableCell>
+                    <TableCell className="p-2 text-sm text-[#1D3025]">{key.expires_at ? format(new Date(key.expires_at), 'yyyy-MM-dd') : translate('keys.never')}</TableCell>
+                    <TableCell className="p-2 text-sm text-[#1D3025]">{format(new Date(key.created_at), 'yyyy-MM-dd HH:mm')}</TableCell>
+                    <TableCell className="p-2">
+                      <div className="flex gap-1 items-center">
+                        <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => openEditDialog(key)}>
+                          <EditIcon className="h-4 w-4 text-[#1D3025]" />
                         </Button>
-                        <Button variant="ghost" size="icon-sm" onClick={() => handleToggleStatus(key)}>
-                          {key.status === 'active' ? translate('keys.disable') : translate('keys.enable')}
-                        </Button>
-                        <Button variant="ghost" size="icon-sm" className="text-destructive" onClick={() => openDeleteDialog(key)}>
-                          <TrashIcon className="h-4 w-4" />
+                        <Switch
+                          checked={key.status === 'active'}
+                          onCheckedChange={() => handleToggleStatus(key)}
+                        />
+                        <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => openDeleteDialog(key)}>
+                          <TrashIcon className="h-4 w-4 text-[#BC1010]" />
                         </Button>
                       </div>
                     </TableCell>
@@ -305,7 +309,7 @@ export default function KeysPage() {
             <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
               {translate('keys.cancel')}
             </Button>
-            <Button disabled={isCreating} onClick={handleCreate}>
+            <Button variant="success" disabled={isCreating} onClick={handleCreate}>
               {isCreating ? translate('keys.creating') : translate('keys.create')}
             </Button>
           </DialogFooter>
@@ -343,7 +347,7 @@ export default function KeysPage() {
             <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
               {translate('keys.cancel')}
             </Button>
-            <Button disabled={isUpdating} onClick={handleUpdate}>
+            <Button variant="success" disabled={isUpdating} onClick={handleUpdate}>
               {isUpdating ? translate('keys.saving') : translate('keys.save')}
             </Button>
           </DialogFooter>

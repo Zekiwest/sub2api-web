@@ -44,7 +44,15 @@
     "usageTrend": "Usage Trend",
     "last7Days": "Last 7 days",
     "topModels": "Top Models",
-    "chartPlaceholder": "Chart will be implemented with shadcn chart"
+    "chartPlaceholder": "Chart will be implemented with shadcn chart",
+    "tokenDistribution": "Token Distribution",
+    "cacheCreation": "Cache Creation",
+    "cacheRead": "Cache Read",
+    "costByModel": "Cost by Model",
+    "requestsByModel": "Requests by Model",
+    "vsLastWeek": "vs last week",
+    "averageDuration": "Avg. Duration",
+    "milliseconds": "ms"
   },
   "keys": {
     "title": "API Keys",

@@ -4,14 +4,8 @@
  * Manual edits to labels/descriptions are preserved, but structure changes may be overwritten.
  * To stop versioning this component, run: npx uifork promote dashboard-layout <version-id>
  */
-import { DashboardLayout as DashboardLayoutV1 } from "./dashboard-layout.v1"
 import { DashboardLayout as DashboardLayoutV3 } from "./dashboard-layout.v3"
 export const VERSIONS = {
-  "v1": {
-    render: DashboardLayoutV1,
-    label: "HeroUI",
-    description: "Original layout with custom sidebar",
-  },
   "v3": {
     render: DashboardLayoutV3,
     label: "Paper Design",

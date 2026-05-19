@@ -1,7 +1,7 @@
 # _dir.md - src 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-14
+> 最后更新: 2026-05-18
 
 ## 目录目的
 
@@ -15,6 +15,7 @@
 | `components/` | 可复用 React 组件 | props/state | UI 元素 |
 | `stores/` | Zustand 状态管理 | actions | state |
 | `lib/` | API 客户端与工具函数 | API 参数 | API 响应 |
+| `hooks/` | 自定义 React Hooks | - | 状态逻辑 |
 | `types/` | TypeScript 类型定义 | - | 类型导出 |
 
 ## 主要文件
