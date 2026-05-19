@@ -1,7 +1,7 @@
 # _dir.md - src/lib/i18n 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-18
+> 最后更新: 2026-05-19
 
 ## 目录目的
 
@@ -41,9 +41,11 @@ export function useTranslation() {
   },
   "keys": { "title", "createNew", "name", "status" },
   "usage": { "title", "model", "tokens", "cost" },
-  "header": { "dashboard", "apiKeys", "usage" },
+  "header": { "dashboard", "apiKeys", "usage", "settings", "invite" },
   "sidebar": { "collapse" },
-  "language": { "switch", "en", "zh" }
+  "language": { "switch", "en", "zh" },
+  "settings": { "title", "profile", "password", "language" },
+  "invite": { "title", "yourLink", "totalInvites", "invitees" }
 }
 ```
 
@@ -60,6 +62,8 @@ graph TD
     KPI[ui/kpi-card.tsx] --> I
     SIDEBAR[sidebar.v2.tsx] --> I
     HEADER[site-header.v2.tsx] --> I
+    SETTINGS[settings/page.tsx] --> I
+    INVITE[invite/page.tsx] --> I
     SWITCH[language-switcher.tsx] --> LS
 ```
 

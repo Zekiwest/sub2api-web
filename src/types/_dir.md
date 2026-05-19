@@ -1,7 +1,7 @@
 # _dir.md - src/types 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-14
+> 最后更新: 2026-05-19
 
 ## 目录目的
 
@@ -11,7 +11,7 @@
 
 | 文件 | 作用 | 导出类型数 |
 |------|------|------------|
-| `index.ts` | 全局类型定义 | ~20 |
+| `index.ts` | 全局类型定义 | ~25 |
 
 ## 类型分类
 
@@ -39,6 +39,10 @@
 - `ModelStatsResponse` - 模型统计响应
 - `UsageLog` - 使用日志条目
 
+### 邀请系统
+- `InviteStats` - 邀请统计 (链接、邀请数、奖励)
+- `Invitee` - 被邀请用户信息
+
 ## 依赖关系
 
 ```mermaid
@@ -54,6 +58,9 @@ graph TD
     L2 --> KP[keys page]
     L3 --> DP[dashboard page]
     L3 --> UP[usage page]
+    
+    T --> IP[invite page]
+    T --> SP[settings page]
 ```
 
 ## GEB 自指规则

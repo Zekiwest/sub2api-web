@@ -24,6 +24,7 @@ import { LanguageSwitcher } from '@/components/language-switcher';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -35,6 +36,8 @@ const pageKeyMap: Record<string, string> = {
   '/dashboard': 'header.dashboard',
   '/keys': 'header.apiKeys',
   '/usage': 'header.usage',
+  '/settings': 'settings.title',
+  '/invite': 'invite.title',
 };
 
 interface SiteHeaderV2Props {
@@ -101,20 +104,22 @@ export function SiteHeaderV2({ sidebarWidth }: SiteHeaderV2Props) {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={4} className="w-56">
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user?.username}</p>
-                <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email}
-                </p>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user?.username}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="gap-2">
               <DollarSignIcon className="h-4 w-4" />
               <span>{translate('dashboard.balance')}: ${user?.balance?.toFixed(2) || '0.00'}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2">
+            <DropdownMenuItem className="gap-2" onClick={() => router.push('/settings')}>
               <SettingsIcon className="h-4 w-4" />
               <span>{translate('common.settings')}</span>
             </DropdownMenuItem>

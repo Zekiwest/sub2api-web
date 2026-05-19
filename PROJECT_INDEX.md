@@ -1,7 +1,7 @@
 # PROJECT_INDEX.md - GEB L1 项目索引
 
 > **本文件是 GEB L1 索引，任何项目结构或重要文件变更后必须更新我**
-> 最后更新: 2026-05-18
+> 最后更新: 2026-05-19
 
 ## 项目概述
 
@@ -20,6 +20,8 @@ Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API K
 │  - /dashboard          │  - Layout           │              │
 │  - /keys               │  - KPICard (Tremor) │              │
 │  - /usage              │  - SparkChart       │              │
+│  - /settings           │                     │              │
+│  - /invite             │                     │              │
 ├─────────────────────────────────────────────────────────────┤
 │                 Lib Layer (API + i18n)                       │
 │  - auth.ts (认证)     │  - keys.ts (Key)  │  - usage.ts     │
@@ -59,6 +61,8 @@ graph TD
         P4[dashboard/page.tsx]
         P5[keys/page.tsx]
         P6[usage/page.tsx]
+        P7[settings/page.tsx]
+        P8[invite/page.tsx]
     end
 
     subgraph Components
@@ -114,6 +118,12 @@ graph TD
     P6 --> S1
     P6 --> L3
     P6 --> L5
+    P7 --> C2
+    P7 --> S1
+    P7 --> L5
+    P8 --> C2
+    P8 --> S1
+    P8 --> L5
 
     C2 --> C1
     C2 --> C3
@@ -151,7 +161,9 @@ src/
 │   ├── register/     # 注册页
 │   ├── dashboard/    # Dashboard (KPI + 统计图表)
 │   ├── keys/         # API Key 管理
-│   └── usage/        # 使用日志
+│   ├── usage/        # 使用日志
+│   ├── settings/     # 用户设置 (Profile, Password, Language)
+│   └── invite/       # 邀请功能 (链接, 统计, 列表)
 ├── components/       # React 组件
 │   ├── sidebar.v2.tsx   # Sidebar (Paper Design)
 │   ├── site-header.v2.tsx # Header (Paper Design)

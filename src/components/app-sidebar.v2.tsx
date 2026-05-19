@@ -26,6 +26,7 @@ import {
   ChartBarIcon,
   KeyIcon,
   TrendingUpIcon,
+  UsersIcon,
 } from 'lucide-react';
 
 interface SidebarV2Props {
@@ -42,6 +43,7 @@ export function SidebarV2({ isCollapsed, setIsCollapsed }: SidebarV2Props) {
     { path: '/dashboard', label: translate('header.dashboard'), icon: ChartBarIcon },
     { path: '/keys', label: translate('header.apiKeys'), icon: KeyIcon },
     { path: '/usage', label: translate('header.usage'), icon: TrendingUpIcon },
+    { path: '/invite', label: translate('header.invite'), icon: UsersIcon },
   ];
 
   if (!isAuthenticated) {

@@ -16,15 +16,32 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
 
 function DropdownMenuTrigger({
   render,
+  children,
+  className,
   ...props
-}: MenuPrimitive.Trigger.Props & { render?: React.ReactNode }) {
+}: MenuPrimitive.Trigger.Props & {
+  render?: React.ReactNode;
+  children?: React.ReactNode;
+  className?: string;
+}) {
+  // If children is provided but no render, use children as render element
+  const renderElement = render ?? (children ? (
+    <button
+      type="button"
+      className={className}
+      data-slot="dropdown-menu-trigger"
+    >
+      {children}
+    </button>
+  ) : undefined);
+
   return (
     <MenuPrimitive.Trigger
       data-slot="dropdown-menu-trigger"
-      render={render}
+      render={renderElement}
       {...props}
     />
-  )
+  );
 }
 
 function DropdownMenuContent({
@@ -50,7 +67,7 @@ function DropdownMenuContent({
       >
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
-          className={cn("z-50 max-h-(--available-height) w-(--anchor-width) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 outline-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:overflow-hidden data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+          className={cn("z-50 max-h-(--available-height) w-(--anchor-width) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground border border-border/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] duration-100 outline-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:overflow-hidden data-closed:fade-out-0 data-closed:zoom-out-95", className )}
           {...props}
         />
       </MenuPrimitive.Positioner>

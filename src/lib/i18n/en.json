@@ -123,7 +123,9 @@
   "header": {
     "dashboard": "Dashboard",
     "apiKeys": "API Keys",
-    "usage": "Usage Logs"
+    "usage": "Usage Logs",
+    "settings": "Settings",
+    "invite": "Invite"
   },
   "sidebar": {
     "collapse": "Collapse"
@@ -132,5 +134,45 @@
     "switch": "Switch Language",
     "en": "English",
     "zh": "中文"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "profileDesc": "Manage your account information",
+    "profileSaved": "Profile saved successfully",
+    "password": "Password",
+    "passwordDesc": "Change your password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "changePassword": "Change Password",
+    "passwordChanged": "Password changed successfully",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "language": "Language",
+    "languageDesc": "Select your preferred language"
+  },
+  "invite": {
+    "title": "Invite",
+    "yourLink": "Your Invite Link",
+    "shareDesc": "Share this link with friends to earn rewards",
+    "inviteCode": "Invite Code",
+    "copy": "Copy",
+    "copied": "Copied",
+    "linkCopied": "Invite link copied to clipboard",
+    "codeCopied": "Invite code copied to clipboard",
+    "totalInvites": "Total Invites",
+    "activeInvites": "Active",
+    "totalRewards": "Total Rewards",
+    "pendingRewards": "Pending",
+    "invitees": "Invited Users",
+    "inviteesDesc": "Users who registered with your invite link",
+    "noInvitees": "No invited users yet",
+    "howItWorks": "How It Works",
+    "step1": "Share your invite link",
+    "step1Desc": "Send your unique invite link to friends",
+    "step2": "Friends register",
+    "step2Desc": "They create an account using your link",
+    "step3": "Earn rewards",
+    "step3Desc": "Get $2.00 for each active invited user"
   }
 }

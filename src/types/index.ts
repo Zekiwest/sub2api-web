@@ -33,8 +33,31 @@ export interface User {
   email: string;
   role: string;
   balance: number;
+  invite_code?: string; // User's personal invite code
+  invite_count?: number; // Number of users invited
+  invite_rewards?: number; // Total rewards from invites
   created_at: string;
   updated_at: string;
+}
+
+// Invite Types
+export interface InviteStats {
+  invite_code: string;
+  invite_link: string;
+  total_invites: number;
+  active_invites: number;
+  total_rewards: number;
+  pending_rewards: number;
+  invitees: Invitee[];
+}
+
+export interface Invitee {
+  id: number;
+  username: string;
+  email: string;
+  registered_at: string;
+  status: 'active' | 'inactive';
+  rewards_generated: number;
 }
 
 // Auth Types
