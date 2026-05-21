@@ -27,11 +27,12 @@
 | `table.tsx` | 数据表格 | cn |
 | `tooltip.tsx` | 提示气泡 | @radix-ui/react-tooltip |
 
-### 自定义组件 (Tremor Blocks 风格)
+### 自定义组件 (Tremor Blocks 风格 + 移动端响应式)
 | 文件 | 作用 | 依赖 |
 |------|------|------|
 | `kpi-card.tsx` | KPI 统计卡片（带趋势+迷你图） | @radix-ui/react-slot, lucide-react |
 | `spark-chart.tsx` | 迷你趋势图 (Area/Line/Bar) | recharts |
+| `responsive-table.tsx` | 响应式表格（移动端卡片/桌面端表格） | Tailwind CSS |
 
 ## 输入/输出
 - **输入**: 无（纯 UI 组件库）
@@ -72,4 +73,4 @@ graph LR
 - 组件删除 → 从清单中移除，检查所有引用页面
 
 ---
-*最后更新: 2026-05-18*
+*最后更新: 2026-05-21*

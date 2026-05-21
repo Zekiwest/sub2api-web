@@ -1,7 +1,7 @@
 # PROJECT_INDEX.md - GEB L1 项目索引
 
 > **本文件是 GEB L1 索引，任何项目结构或重要文件变更后必须更新我**
-> 最后更新: 2026-05-19
+> 最后更新: 2026-05-21
 
 ## 项目概述
 
@@ -14,13 +14,13 @@ Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API K
 │                     Browser (React App)                      │
 ├─────────────────────────────────────────────────────────────┤
 │  Pages (App Router)    │  Components         │  Stores      │
-│  - /                   │  - Sidebar (v2)     │  - auth.ts    │
-│  - /login              │  - Header (v2)      │  - locale.ts  │
+│  - /                   │  - Sidebar (v3)     │  - auth.ts    │
+│  - /login              │  - Header (v3)      │  - locale.ts  │
 │  - /register           │  - LanguageSwitch   │              │
-│  - /dashboard          │  - Layout           │              │
+│  - /dashboard          │  - Layout (v4)      │              │
 │  - /keys               │  - KPICard (Tremor) │              │
 │  - /usage              │  - SparkChart       │              │
-│  - /settings           │                     │              │
+│  - /settings           │  - ResponsiveTable  │              │
 │  - /invite             │                     │              │
 ├─────────────────────────────────────────────────────────────┤
 │                 Lib Layer (API + i18n)                       │
@@ -66,13 +66,14 @@ graph TD
     end
 
     subgraph Components
-        C1[sidebar.v2.tsx]
-        C2[dashboard-layout.tsx]
-        C3[site-header.v2.tsx]
+        C1[app-sidebar.v3.tsx]
+        C2[dashboard-layout.v4.tsx]
+        C3[site-header.v3.tsx]
         C4[language-switcher.tsx]
         C5[providers.tsx]
         C6[kpi-card.tsx]
         C7[spark-chart.tsx]
+        C8[responsive-table.tsx]
     end
 
     subgraph Hooks
@@ -165,14 +166,16 @@ src/
 │   ├── settings/     # 用户设置 (Profile, Password, Language)
 │   └── invite/       # 邀请功能 (链接, 统计, 列表)
 ├── components/       # React 组件
-│   ├── sidebar.v2.tsx   # Sidebar (Paper Design)
-│   ├── site-header.v2.tsx # Header (Paper Design)
+│   ├── app-sidebar.v3.tsx # Sidebar (Mobile Responsive - Sheet drawer)
+│   ├── site-header.v3.tsx # Header (Mobile Responsive - hamburger menu)
+│   ├── dashboard-layout.v4.tsx # 布局容器 (Mobile Responsive)
+│   ├── dashboard-layout.versions.ts # uifork 版本管理
 │   ├── language-switcher.tsx # 语言切换按钮
-│   ├── dashboard-layout.tsx # 布局容器 (uifork)
 │   ├── providers.tsx    # Provider 配置 (toast + uifork)
 │   └── ui/              # shadcn/ui + 自定义组件
 │       ├── kpi-card.tsx    # KPI 卡片 (Tremor 风格)
 │       ├── spark-chart.tsx # 迷你趋势图
+│       ├── responsive-table.tsx # 响应式表格 (Card/Table 双布局)
 │       ├── chart.tsx       # Recharts 容器
 │       └── ...             # 其他 shadcn 组件
 ├── stores/           # Zustand 状态
@@ -203,10 +206,12 @@ src/
 | `src/stores/auth.ts` | 认证状态，控制登录态 | ⭐⭐⭐ |
 | `src/stores/locale.ts` | 语言状态，控制界面语言 | ⭐⭐⭐ |
 | `src/lib/i18n/index.ts` | 翻译系统核心 | ⭐⭐⭐ |
+| `src/components/ui/responsive-table.tsx` | 响应式表格（移动端卡片/桌面端表格） | ⭐⭐ |
+| `src/components/app-sidebar.v3.tsx` | Sidebar (Mobile Responsive) | ⭐⭐ |
+| `src/components/site-header.v3.tsx` | Header (Mobile Responsive) | ⭐⭐ |
+| `src/components/dashboard-layout.v4.tsx` | 布局容器 (Mobile Responsive) | ⭐⭐ |
 | `src/components/ui/kpi-card.tsx` | Tremor 风格 KPI 卡片 | ⭐⭐ |
 | `src/components/ui/spark-chart.tsx` | 迷你趋势图组件 | ⭐⭐ |
-| `src/components/sidebar.v2.tsx` | Sidebar (Paper Design) | ⭐⭐ |
-| `src/components/site-header.v2.tsx` | Header (Paper Design) | ⭐⭐ |
 
 ## API 端点映射
 

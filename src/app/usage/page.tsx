@@ -10,6 +10,8 @@
  *   - 日志字段变化时，需更新表格列
  *   - 篮选功能变化时，需更新本文件
  *   - 设计系统颜色变化时，需更新样式配置
+ * 版本记录:
+ *   - 2026-05-20: 添加移动端响应式表格（Card List Pattern）
  * ============================================================================
  */
 
@@ -18,6 +20,7 @@ import { DashboardLayout } from '@/components/dashboard-layout';
 import { usageApi } from '@/lib/usage';
 import { keysApi } from '@/lib/keys';
 import { useAuthStore } from '@/stores/auth';
+import { ResponsiveTable } from '@/components/ui/responsive-table';
 import type { UsageLog, ApiKey, PaginatedResponse } from '@/types';
 import { format } from 'date-fns';
 import { ChevronDown } from 'lucide-react';
@@ -139,112 +142,109 @@ export default function UsagePage() {
         <div className="h-px w-full bg-[#D3DED8]" />
 
         {/* Table */}
-        {isLoading ? (
-          <div className="flex justify-center p-20">
-            <div className="animate-pulse flex flex-col gap-4 w-full px-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-12 bg-[#EFEFEF] rounded" />
-              ))}
-            </div>
-          </div>
-        ) : !logs || logs.items.length === 0 ? (
-          <div className="text-center text-[14px] text-[#5C7064] p-10">
-            No usage logs found.
-          </div>
-        ) : (
-          <div className="px-4">
-            <div className="border-collapse w-full">
-              {/* Table Header */}
-              <div className="flex border-b border-solid border-[#D3DED8]">
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '182px' }}>
-                  Time
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '148px' }}>
-                  API Key
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '145px' }}>
-                  Model
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '60px' }}>
-                  Type
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '65px' }}>
-                  Input
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '81px' }}>
-                  Output
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '91px' }}>
-                  Cache
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '88px' }}>
-                  Cost
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '94px' }}>
-                  Duration
-                </div>
-                <div className="flex items-center h-10 px-2 text-[14px] leading-[142.857%] font-medium text-[#1D3025]" style={{ minWidth: '98px' }}>
-                  Status
+        <div className="px-4">
+          <ResponsiveTable
+            data={logs?.items || []}
+            emptyMessage="No usage logs found."
+            isLoading={isLoading}
+            loadingComponent={
+              <div className="flex justify-center p-20">
+                <div className="animate-pulse flex flex-col gap-4 w-full">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-12 bg-[#EFEFEF] rounded" />
+                  ))}
                 </div>
               </div>
-
-              {/* Table Body */}
-              {logs.items.map((log) => (
-                <div key={log.id} className="flex border-b border-solid border-[#D3DED8]">
-                  <div className="flex items-center p-2 text-[14px] leading-[142.857%] text-[#1D3025]" style={{ minWidth: '182px' }}>
-                    {format(new Date(log.created_at), 'yyyy-MM-dd HH:mm:ss')}
-                  </div>
-                  <div className="flex items-center p-2 text-[14px] leading-[142.857%] text-[#1D3025]" style={{ minWidth: '148px' }}>
-                    {log.api_key_name || `Key #${log.api_key_id}`}
-                  </div>
-                  <div className="flex items-center p-2" style={{ minWidth: '145px' }}>
-                    <div className="flex items-center justify-center h-5 px-2 rounded-[5px] bg-[#1F5134] border border-solid border-transparent">
-                      <div className="text-[12px] leading-[133.333%] font-medium text-[#F2ECD9]">
-                        {log.model}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center p-2 text-[14px] leading-[142.857%] text-[#1D3025]" style={{ minWidth: '60px' }}>
-                    {log.request_type}
-                  </div>
-                  <div className="flex items-center p-2 text-[14px] leading-[142.857%] text-[#1D3025]" style={{ minWidth: '65px' }}>
-                    {log.input_tokens?.toLocaleString() || '0'}
-                  </div>
-                  <div className="flex items-center p-2 text-[14px] leading-[142.857%] text-[#1D3025]" style={{ minWidth: '81px' }}>
-                    {log.output_tokens?.toLocaleString() || '0'}
-                  </div>
-                  <div className="flex items-center p-2" style={{ minWidth: '91px' }}>
-                    <div className="flex flex-col gap-1">
-                      <div className="text-[12px] leading-[133.333%] text-[#5C7064]">
-                        Create: {log.cache_creation_tokens || 0}
-                      </div>
-                      <div className="text-[12px] leading-[133.333%] text-[#5C7064]">
-                        Read: {log.cache_read_tokens || 0}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center p-2 text-[14px] leading-[142.857%] text-[#1D3025]" style={{ minWidth: '88px' }}>
-                    ${log.actual_cost?.toFixed(4) || '0.0000'}
-                  </div>
-                  <div className="flex items-center p-2 text-[14px] leading-[142.857%] text-[#1D3025]" style={{ minWidth: '94px' }}>
-                    {log.duration_ms || 0}ms
-                  </div>
-                  <div className="flex items-center p-2" style={{ minWidth: '98px' }}>
-                    <div className="flex items-center justify-center h-5 px-2 rounded-[5px] border border-solid border-transparent"
-                         style={{
-                           backgroundColor: log.status === 'success' ? '#C91D2B' : '#C91D2B',
-                           color: '#FCF7E8'
-                         }}>
-                      <div className="text-[12px] leading-[133.333%] font-medium text-[#FCF7E8]">
-                        {log.status}
-                      </div>
-                    </div>
-                  </div>
+            }
+            cardTitle={(log) => (
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-center h-5 px-2 rounded-[5px] bg-[#1F5134]">
+                  <span className="text-[12px] font-medium text-[#F2ECD9]">{log.model}</span>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+                <span className="text-xs text-[#5C7064]">
+                  {format(new Date(log.created_at), 'yyyy-MM-dd HH:mm')}
+                </span>
+              </div>
+            )}
+            columns={[
+              {
+                key: 'time',
+                label: 'Time',
+                mobileLabel: 'Time',
+                render: (log) => format(new Date(log.created_at), 'yyyy-MM-dd HH:mm:ss'),
+              },
+              {
+                key: 'apiKey',
+                label: 'API Key',
+                mobileLabel: 'Key',
+                render: (log) => log.api_key_name || `Key #${log.api_key_id}`,
+              },
+              {
+                key: 'model',
+                label: 'Model',
+                mobilePriority: 'low',
+                render: (log) => (
+                  <div className="flex items-center justify-center h-5 px-2 rounded-[5px] bg-[#1F5134]">
+                    <span className="text-[12px] font-medium text-[#F2ECD9]">{log.model}</span>
+                  </div>
+                ),
+              },
+              {
+                key: 'type',
+                label: 'Type',
+                mobilePriority: 'low',
+                render: (log) => log.request_type,
+              },
+              {
+                key: 'input',
+                label: 'Input',
+                mobileLabel: 'Input',
+                render: (log) => log.input_tokens?.toLocaleString() || '0',
+              },
+              {
+                key: 'output',
+                label: 'Output',
+                mobileLabel: 'Output',
+                render: (log) => log.output_tokens?.toLocaleString() || '0',
+              },
+              {
+                key: 'cache',
+                label: 'Cache',
+                mobileLabel: 'Cache',
+                render: (log) => (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[12px] text-[#5C7064]">Create: {log.cache_creation_tokens || 0}</span>
+                    <span className="text-[12px] text-[#5C7064]">Read: {log.cache_read_tokens || 0}</span>
+                  </div>
+                ),
+              },
+              {
+                key: 'cost',
+                label: 'Cost',
+                mobileLabel: 'Cost',
+                render: (log) => `$${log.actual_cost?.toFixed(4) || '0.0000'}`,
+              },
+              {
+                key: 'duration',
+                label: 'Duration',
+                mobileLabel: 'Duration',
+                render: (log) => `${log.duration_ms || 0}ms`,
+              },
+              {
+                key: 'status',
+                label: 'Status',
+                mobilePriority: 'low',
+                render: (log) => (
+                  <div
+                    className="flex items-center justify-center h-5 px-2 rounded-[5px] bg-[#C91D2B]"
+                  >
+                    <span className="text-[12px] font-medium text-[#FCF7E8]">{log.status}</span>
+                  </div>
+                ),
+              },
+            ]}
+          />
+        </div>
 
         {/* Pagination */}
         {logs && (

@@ -9,6 +9,8 @@
  * 变更同步:
  *   - Key 操作功能变化时，需更新本文件及 keys 翻译键
  *   - Dialog 结构变化时，需检查 shadcn 版本兼容性
+ * 版本记录:
+ *   - 2026-05-20: 添加移动端响应式表格（Card List Pattern）
  * ============================================================================
  */
 
@@ -18,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { ResponsiveTable } from '@/components/ui/responsive-table';
 import {
   Dialog,
   DialogContent,
@@ -26,14 +29,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { keysApi } from '@/lib/keys';
@@ -203,68 +198,117 @@ export default function KeysPage() {
           <CardContent className="flex justify-center p-20">
             <Skeleton className="h-8 w-8 rounded-full" />
           </CardContent>
-        ) : keys.length === 0 ? (
-          <CardContent className="text-center text-muted-foreground p-10">
-            {translate('keys.noKeys')}
-          </CardContent>
         ) : (
           <CardContent className="px-4">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-b border-[#D3DED8]">
-                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.name')}</TableHead>
-                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.key')}</TableHead>
-                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.status')}</TableHead>
-                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.quota')}</TableHead>
-                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.used')}</TableHead>
-                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.expires')}</TableHead>
-                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.created')}</TableHead>
-                  <TableHead className="h-10 px-2 text-sm font-medium text-[#1D3025]">{translate('keys.actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {keys.map((key, index) => (
-                  <TableRow key={key.id} className={index === keys.length - 1 ? 'border-0' : 'border-b border-[#D3DED8]'}>
-                    <TableCell className="p-2 text-sm font-medium text-[#1D3025]">{key.name}</TableCell>
-                    <TableCell className="p-2">
-                      <div className="flex items-center gap-2">
-                        <div className="max-w-[200px] rounded-sm px-2 py-1 bg-[#F1EEE4] overflow-hidden">
-                          <code className="text-xs font-mono text-[#1D3025] truncate block">
-                            {key.key.substring(0, 20)}...
-                          </code>
-                        </div>
-                        <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => handleCopyKey(key.key)}>
-                          <CopyIcon className="h-4 w-4 text-[#1D3025]" />
-                        </Button>
+            <ResponsiveTable
+              data={keys}
+              emptyMessage={translate('keys.noKeys')}
+              isLoading={isLoading}
+              loadingComponent={
+                <div className="flex justify-center p-20">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                </div>
+              }
+              cardTitle={(key) => (
+                <div className="flex items-center gap-2">
+                  <span>{key.name}</span>
+                  <Badge variant={key.status === 'active' ? 'active' : 'inactive'}>
+                    {translate(`keys.${key.status}`)}
+                  </Badge>
+                </div>
+              )}
+              cardActions={(key) => (
+                <div className="flex gap-1 items-center">
+                  <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => openEditDialog(key)}>
+                    <EditIcon className="h-4 w-4 text-[#1D3025]" />
+                  </Button>
+                  <Switch
+                    checked={key.status === 'active'}
+                    onCheckedChange={() => handleToggleStatus(key)}
+                  />
+                  <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => openDeleteDialog(key)}>
+                    <TrashIcon className="h-4 w-4 text-[#BC1010]" />
+                  </Button>
+                </div>
+              )}
+              columns={[
+                {
+                  key: 'name',
+                  label: translate('keys.name'),
+                  render: (key) => key.name,
+                },
+                {
+                  key: 'key',
+                  label: translate('keys.key'),
+                  mobileLabel: translate('keys.key'),
+                  render: (key) => (
+                    <div className="flex items-center gap-2">
+                      <div className="max-w-[200px] rounded-sm px-2 py-1 bg-[#F1EEE4] overflow-hidden">
+                        <code className="text-xs font-mono text-[#1D3025] truncate block">
+                          {key.key.substring(0, 20)}...
+                        </code>
                       </div>
-                    </TableCell>
-                    <TableCell className="p-2">
-                      <Badge variant={key.status === 'active' ? 'active' : 'inactive'}>
-                        {translate(`keys.${key.status}`)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="p-2 text-sm text-[#1D3025]">{key.quota > 0 ? `$${key.quota.toFixed(2)}` : translate('keys.unlimited')}</TableCell>
-                    <TableCell className="p-2 text-sm text-[#1D3025]">{`$${key.used_quota?.toFixed(2) || '0.00'}`}</TableCell>
-                    <TableCell className="p-2 text-sm text-[#1D3025]">{key.expires_at ? format(new Date(key.expires_at), 'yyyy-MM-dd') : translate('keys.never')}</TableCell>
-                    <TableCell className="p-2 text-sm text-[#1D3025]">{format(new Date(key.created_at), 'yyyy-MM-dd HH:mm')}</TableCell>
-                    <TableCell className="p-2">
-                      <div className="flex gap-1 items-center">
-                        <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => openEditDialog(key)}>
-                          <EditIcon className="h-4 w-4 text-[#1D3025]" />
-                        </Button>
-                        <Switch
-                          checked={key.status === 'active'}
-                          onCheckedChange={() => handleToggleStatus(key)}
-                        />
-                        <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => openDeleteDialog(key)}>
-                          <TrashIcon className="h-4 w-4 text-[#BC1010]" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                      <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => handleCopyKey(key.key)}>
+                        <CopyIcon className="h-4 w-4 text-[#1D3025]" />
+                      </Button>
+                    </div>
+                  ),
+                },
+                {
+                  key: 'status',
+                  label: translate('keys.status'),
+                  mobilePriority: 'low',
+                  render: (key) => (
+                    <Badge variant={key.status === 'active' ? 'active' : 'inactive'}>
+                      {translate(`keys.${key.status}`)}
+                    </Badge>
+                  ),
+                },
+                {
+                  key: 'quota',
+                  label: translate('keys.quota'),
+                  mobileLabel: translate('keys.quota'),
+                  render: (key) => key.quota > 0 ? `$${key.quota.toFixed(2)}` : translate('keys.unlimited'),
+                },
+                {
+                  key: 'used',
+                  label: translate('keys.used'),
+                  mobileLabel: translate('keys.used'),
+                  render: (key) => `$${key.used_quota?.toFixed(2) || '0.00'}`,
+                },
+                {
+                  key: 'expires',
+                  label: translate('keys.expires'),
+                  mobileLabel: translate('keys.expires'),
+                  render: (key) => key.expires_at ? format(new Date(key.expires_at), 'yyyy-MM-dd') : translate('keys.never'),
+                },
+                {
+                  key: 'created',
+                  label: translate('keys.created'),
+                  mobilePriority: 'low',
+                  render: (key) => format(new Date(key.created_at), 'yyyy-MM-dd HH:mm'),
+                },
+                {
+                  key: 'actions',
+                  label: translate('keys.actions'),
+                  mobilePriority: 'low',
+                  render: (key) => (
+                    <div className="flex gap-1 items-center">
+                      <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => openEditDialog(key)}>
+                        <EditIcon className="h-4 w-4 text-[#1D3025]" />
+                      </Button>
+                      <Switch
+                        checked={key.status === 'active'}
+                        onCheckedChange={() => handleToggleStatus(key)}
+                      />
+                      <Button variant="ghost" size="icon-sm" className="size-7" onClick={() => openDeleteDialog(key)}>
+                        <TrashIcon className="h-4 w-4 text-[#BC1010]" />
+                      </Button>
+                    </div>
+                  ),
+                },
+              ]}
+            />
           </CardContent>
         )}
       </Card>

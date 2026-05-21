@@ -1,7 +1,7 @@
 # _dir.md - src/components 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-18
+> 最后更新: 2026-05-21
 
 ## 目录目的
 
@@ -11,10 +11,11 @@
 
 | 文件 | 作用 | 输入 | 输出 | 使用者 |
 |------|------|------|------|--------|
-| `app-sidebar.v2.tsx` | Sidebar (Paper Design) | `isCollapsed`, `setIsCollapsed` | 收拢导航 | `dashboard-layout.tsx` |
-| `site-header.v2.tsx` | Header (Paper Design) | `user` state | Header + 语言切换 | `dashboard-layout.tsx` |
-| `language-switcher.tsx` | 语言切换下拉 | `locale` state | 🇺🇸/🇨🇳 切换 | `site-header.v2.tsx` |
-| `dashboard-layout.tsx` | Dashboard 布局容器 | children | Sidebar + Header + Main | 所有认证页面 |
+| `app-sidebar.v3.tsx` | Sidebar (Mobile Responsive) | `isCollapsed`, Sheet drawer | 收拢导航 | `dashboard-layout.v4.tsx` |
+| `site-header.v3.tsx` | Header (Mobile Responsive) | `user` state, `onMenuClick` | Header + hamburger menu | `dashboard-layout.v4.tsx` |
+| `language-switcher.tsx` | 语言切换下拉 | `locale` state | 🇺🇸/🇨🇳 切换 | `site-header.v3.tsx` |
+| `dashboard-layout.v4.tsx` | Dashboard 布局容器 (Mobile Responsive) | children | Sidebar + Header + Main | 所有认证页面 |
+| `dashboard-layout.versions.ts` | uifork 版本管理 | - | VERSIONS object | `dashboard-layout.tsx` |
 | `providers.tsx` | Provider 包装 (toast + uifork) | children | Toast 上下文 | `app/layout.tsx` |
 | `ui/` | shadcn/ui + 自定义组件 | - | Button, Card, KPI 等 | 多处引用 |
 
@@ -50,20 +51,24 @@ graph TD
 
 ## 关键设计
 
-### dashboard-layout.tsx
-- 固定左侧 Sidebar (可收拢: 52px / 展开: 200px)
-- 顶部 Header (56px)
-- 主内容区自适应
+### dashboard-layout.v4.tsx (Mobile Responsive)
+- 使用 useIsMobile hook (768px breakpoint)
+- Mobile: Sheet drawer sidebar, hamburger menu trigger
+- Desktop: Fixed sidebar with collapse button and keyboard shortcut (`)
 
-### app-sidebar.v2.tsx (Paper Design)
+### app-sidebar.v3.tsx (Mobile Responsive)
+- Mobile: Sheet drawer component for navigation
+- Desktop: Fixed sidebar with collapse functionality
 - Logo 区域 (56px)
 - 收拢宽度: 52px (居中对齐图标)
-- 导航菜单: Dashboard, API Keys, Usage
+- 导航菜单: Dashboard, API Keys, Usage, Invite
 - 用户头像 + 名称 + 余额
 - 收起/展开按钮
 - 使用 `useTranslation` 获取翻译
 
-### site-header.v2.tsx (Paper Design)
+### site-header.v3.tsx (Mobile Responsive)
+- Mobile: Header with hamburger menu button (onMenuClick prop)
+- Desktop: Full header with language switcher, notifications, user dropdown
 - Logo + 标题
 - 语言切换下拉 (🇺🇸/🇨🇳)
 - 用户下拉菜单 (设置/退出)

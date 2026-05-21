@@ -1,7 +1,7 @@
 # _dir.md - src/app/usage 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-18
+> 最后更新: 2026-05-21
 
 ## 目录目的
 
@@ -16,10 +16,12 @@
 ## 页面功能
 
 - SaaS 布局 (DashboardLayout + Sidebar)
-- 日志列表表格 (自定义样式，匹配 Paper Design)
+- 响应式表格 (ResponsiveTable: Mobile Card / Desktop Table)
+- 日志列表表格
 - API Key 筛选器 (自定义 select + lucide-react ChevronDown 图标)
 - 分页导航
 - 日志详情: 时间, Key, 模型, 类型, Tokens, Cost, Duration, Status
+- 移动端卡片布局 (cardTitle 显示 model + time)
 
 ## 设计系统
 
@@ -34,6 +36,7 @@
 ```mermaid
 graph LR
     P[page.tsx] --> DL[components/dashboard-layout]
+    P --> RT[components/ui/responsive-table]
     P --> S[stores/auth.ts]
     P --> U[lib/usage.ts]
     P --> K[lib/keys.ts]

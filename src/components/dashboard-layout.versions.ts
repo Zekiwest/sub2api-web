@@ -5,10 +5,16 @@
  * To stop versioning this component, run: npx uifork promote dashboard-layout <version-id>
  */
 import { DashboardLayout as DashboardLayoutV3 } from "./dashboard-layout.v3"
+import { DashboardLayout as DashboardLayoutV4 } from "./dashboard-layout.v4"
 export const VERSIONS = {
   "v3": {
     render: DashboardLayoutV3,
     label: "Paper Design",
     description: "Layout based on Paper design file with fixed sidebar width and blur header",
+  },
+  "v4": {
+    render: DashboardLayoutV4,
+    label: "Mobile Responsive",
+    description: "Mobile-responsive layout with Sheet drawer sidebar and hamburger menu",
   },
 }

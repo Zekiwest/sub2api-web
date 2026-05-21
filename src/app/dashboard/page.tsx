@@ -165,7 +165,7 @@ export default function DashboardPage() {
               <CardDescription>{translate('dashboard.last7Days')}</CardDescription>
             </CardHeader>
             <CardContent className="p-4">
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={300} minWidth={0} minHeight={40}>
                 <LineChart data={trend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
                   <XAxis dataKey="date" tick={{ fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#e5e5e5' }} />
@@ -188,7 +188,7 @@ export default function DashboardPage() {
                 <CardTitle>{translate('dashboard.requestsByModel')}</CardTitle>
               </CardHeader>
               <CardContent className="p-4">
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={250} minWidth={0} minHeight={40}>
                   <PieChart>
                     <Pie data={models} dataKey="requests" nameKey="model" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                       {models.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
@@ -205,7 +205,7 @@ export default function DashboardPage() {
                 <CardTitle>{translate('dashboard.tokenDistribution')}</CardTitle>
               </CardHeader>
               <CardContent className="p-4">
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={250} minWidth={0} minHeight={40}>
                   <PieChart>
                     <Pie data={tokenDistribution.filter((d) => d.value > 0)} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                       {tokenDistribution.filter((d) => d.value > 0).map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
@@ -224,7 +224,7 @@ export default function DashboardPage() {
               <CardTitle>{translate('dashboard.costByModel')}</CardTitle>
             </CardHeader>
             <CardContent className="p-4">
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={300} minWidth={0} minHeight={40}>
                 <BarChart data={models} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" horizontal={false} />
                   <XAxis type="number" tick={{ fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#e5e5e5' }} />
