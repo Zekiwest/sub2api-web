@@ -81,6 +81,26 @@ export interface AuthResponse {
   user: User;
 }
 
+// API Key Group Types
+export interface ApiKeyGroup {
+  id: number;
+  name: string;
+  description?: string;
+  key_count?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateGroupRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateGroupRequest {
+  name?: string;
+  description?: string;
+}
+
 // API Key Types
 export interface ApiKey {
   id: number;

@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: '📊' },
   { path: '/keys', label: 'API Keys', icon: '🔑' },
+  { path: '/groups', label: 'Groups', icon: '📁' },
   { path: '/usage', label: 'Usage', icon: '📈' },
 ];
 

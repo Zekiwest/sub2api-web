@@ -1,7 +1,7 @@
 # _dir.md - src/lib 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-16
+> 最后更新: 2026-05-23
 
 ## 目录目的
 
@@ -14,6 +14,7 @@
 | `api.ts` | Axios 客户端配置 | 基础配置 | 所有 API lib |
 | `auth.ts` | 认证 API | `/auth/*` | login/register pages |
 | `keys.ts` | API Key CRUD | `/keys` | keys page |
+| `groups.ts` | 分组 CRUD | `/groups` | keys/groups pages |
 | `usage.ts` | 使用统计 API | `/usage/*` | dashboard/usage pages |
 | `utils.ts` | 工具函数 | - | 多处引用 |
 | `i18n/` | 国际化模块 | - | 所有页面/组件 |
@@ -43,6 +44,12 @@ const api = axios.create({
 - `delete(id)` → DELETE `/keys/:id`
 - `toggleStatus(id, status)` → PUT `/keys/:id/status`
 
+### groups.ts
+- `list(page, pageSize)` → GET `/groups`
+- `create(payload)` → POST `/groups`
+- `update(id, payload)` → PUT `/groups/:id`
+- `delete(id)` → DELETE `/groups/:id`
+
 ### usage.ts
 - `listLogs(params)` → GET `/usage`
 - `getDashboardStats()` → GET `/usage/dashboard/stats`
@@ -61,10 +68,13 @@ const api = axios.create({
 graph TD
     API[api.ts] --> AUTH[auth.ts]
     API --> KEYS[keys.ts]
+    API --> GROUPS[groups.ts]
     API --> USAGE[usage.ts]
     
     AUTH --> T[types/index.ts]
     KEYS --> T
+    KEYS --> GROUPS
+    GROUPS --> T
     USAGE --> T
     
     I18N[i18n/index.ts] --> LS[stores/locale.ts]
@@ -76,7 +86,10 @@ graph TD
     RP[register page] --> AUTH
     RP --> I18N
     KP[keys page] --> KEYS
+    KP --> GROUPS
     KP --> I18N
+    GP[groups page] --> GROUPS
+    GP --> I18N
     DP[dashboard page] --> USAGE
     DP --> I18N
     UP[usage page] --> USAGE

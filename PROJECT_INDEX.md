@@ -1,7 +1,7 @@
 # PROJECT_INDEX.md - GEB L1 项目索引
 
 > **本文件是 GEB L1 索引，任何项目结构或重要文件变更后必须更新我**
-> 最后更新: 2026-05-21
+> 最后更新: 2026-05-23
 
 ## 项目概述
 
@@ -19,13 +19,15 @@ Sub2API Web 是 Sub2API AI Gateway 平台的前端应用，为用户提供 API K
 │  - /register           │  - LanguageSwitch   │              │
 │  - /dashboard          │  - Layout (v4)      │              │
 │  - /keys               │  - KPICard (Tremor) │              │
-│  - /usage              │  - SparkChart       │              │
+│  - /groups             │  - SparkChart       │              │
+│  - /usage              │  - ResponsiveTable  │              │
 │  - /settings           │  - ResponsiveTable  │              │
 │  - /invite             │                     │              │
 ├─────────────────────────────────────────────────────────────┤
 │                 Lib Layer (API + i18n)                       │
 │  - auth.ts (认证)     │  - keys.ts (Key)  │  - usage.ts     │
-│  - i18n/ (翻译系统)   │  - en.json        │  - zh.json      │
+│  - groups.ts (分组)   │  - i18n/ (翻译)   │                 │
+│  - en.json            │  - zh.json        │                 │
 ├─────────────────────────────────────────────────────────────┤
 │                     Types (index.ts)                         │
 │  - User, ApiKey, UsageLog, DashboardStats, TrendData, etc.  │
@@ -60,9 +62,10 @@ graph TD
         P3[register/page.tsx]
         P4[dashboard/page.tsx]
         P5[keys/page.tsx]
-        P6[usage/page.tsx]
-        P7[settings/page.tsx]
-        P8[invite/page.tsx]
+        P6[groups/page.tsx]
+        P7[usage/page.tsx]
+        P8[settings/page.tsx]
+        P9[invite/page.tsx]
     end
 
     subgraph Components
@@ -88,11 +91,12 @@ graph TD
     subgraph Lib
         L1[auth.ts - 认证API]
         L2[keys.ts - Key API]
-        L3[usage.ts - 使用API]
-        L4[api.ts - Axios配置]
-        L5[i18n/index.ts]
-        L6[i18n/en.json]
-        L7[i18n/zh.json]
+        L3[groups.ts - 分组API]
+        L4[usage.ts - 使用API]
+        L5[api.ts - Axios配置]
+        L6[i18n/index.ts]
+        L7[i18n/en.json]
+        L8[i18n/zh.json]
     end
 
     subgraph Types
@@ -114,6 +118,7 @@ graph TD
     P5 --> C2
     P5 --> S1
     P5 --> L2
+    P5 --> L3
     P5 --> L5
     P6 --> C2
     P6 --> S1
@@ -121,10 +126,14 @@ graph TD
     P6 --> L5
     P7 --> C2
     P7 --> S1
+    P7 --> L4
     P7 --> L5
     P8 --> C2
     P8 --> S1
     P8 --> L5
+    P9 --> C2
+    P9 --> S1
+    P9 --> L5
 
     C2 --> C1
     C2 --> C3
@@ -140,13 +149,15 @@ graph TD
     C6 --> L5
     C7 --> C6
 
-    L1 --> L4
-    L2 --> L4
-    L3 --> L4
+    L1 --> L5
+    L2 --> L5
+    L3 --> L5
+    L4 --> L5
 
     L1 --> T1
     L2 --> T1
     L3 --> T1
+    L4 --> T1
     S1 --> T1
 ```
 
@@ -162,6 +173,7 @@ src/
 │   ├── register/     # 注册页
 │   ├── dashboard/    # Dashboard (KPI + 统计图表)
 │   ├── keys/         # API Key 管理
+│   ├── groups/       # API Key 分组管理
 │   ├── usage/        # 使用日志
 │   ├── settings/     # 用户设置 (Profile, Password, Language)
 │   └── invite/       # 邀请功能 (链接, 统计, 列表)
@@ -185,6 +197,7 @@ src/
 │   ├── api.ts        # Axios 配置
 │   ├── auth.ts       # 认证 API
 │   ├── keys.ts       # Key CRUD
+│   ├── groups.ts     # 分组 CRUD
 │   ├── usage.ts      # 使用统计 API
 │   ├── i18n/         # 国际化
 │   │   ├── index.ts  # useTranslation hook
@@ -223,6 +236,7 @@ src/
 | `/dashboard` | `/usage/dashboard/trend` | 7天趋势 |
 | `/dashboard` | `/usage/dashboard/models` | 模型分布 |
 | `/keys` | `/keys` (CRUD) | Key 管理 |
+| `/groups` | `/groups` (CRUD) | 分组管理 |
 | `/usage` | `/usage` (logs) | 使用日志 |
 
 ## GEB 自指规则

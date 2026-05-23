@@ -1,7 +1,7 @@
 # _dir.md - src/app 目录索引
 
 > **本文件夹内容变更时必须同步更新本 _dir.md**
-> 最后更新: 2026-05-19
+> 最后更新: 2026-05-23
 
 ## 目录目的
 
@@ -16,6 +16,7 @@
 | `register/` | `/register` | 用户注册表单 | 无 |
 | `dashboard/` | `/dashboard` | 使用统计仪表板 | 需登录 |
 | `keys/` | `/keys` | API Key 管理页面 | 需登录 |
+| `groups/` | `/groups` | API Key 分组管理 | 需登录 |
 | `usage/` | `/usage` | 使用日志列表 | 需登录 |
 | `settings/` | `/settings` | 用户设置 (Profile, Password, Language) | 需登录 |
 | `invite/` | `/invite` | 邀请功能 (链接, 统计, 列表) | 需登录 |
@@ -30,7 +31,7 @@
 
 ## 路由保护逻辑
 
-需认证页面 (`dashboard`, `keys`, `usage`, `settings`, `invite`) 通过 `useAuthStore` 检查登录态：
+需认证页面 (`dashboard`, `keys`, `groups`, `usage`, `settings`, `invite`) 通过 `useAuthStore` 检查登录态：
 - 未登录 → 重定向至 `/login` (或返回 null)
 - 已登录 → 渲染页面内容
 

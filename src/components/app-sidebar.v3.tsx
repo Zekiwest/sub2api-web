@@ -35,6 +35,7 @@ import {
   UsersIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  FolderIcon,
 } from 'lucide-react';
 
 interface SidebarV3Props {
@@ -53,6 +54,7 @@ export function SidebarV3({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }: Si
   const navItems = [
     { path: '/dashboard', label: translate('header.dashboard'), icon: ChartBarIcon },
     { path: '/keys', label: translate('header.apiKeys'), icon: KeyIcon },
+    { path: '/groups', label: translate('header.groups'), icon: FolderIcon },
     { path: '/usage', label: translate('header.usage'), icon: TrendingUpIcon },
     { path: '/invite', label: translate('header.invite'), icon: UsersIcon },
   ];

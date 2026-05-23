@@ -32,12 +32,13 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { keysApi } from '@/lib/keys';
+import { groupsApi } from '@/lib/groups';
 import { useAuthStore } from '@/stores/auth';
 import { useTranslation } from '@/lib/i18n';
 import toast from 'react-hot-toast';
-import type { ApiKey, CreateApiKeyRequest } from '@/types';
+import type { ApiKey, CreateApiKeyRequest, ApiKeyGroup } from '@/types';
 import { format } from 'date-fns';
-import { CopyIcon, EditIcon, TrashIcon, PlusIcon } from 'lucide-react';
+import { CopyIcon, EditIcon, TrashIcon, PlusIcon, ChevronDownIcon, FolderIcon } from 'lucide-react';
 
 export default function KeysPage() {
   const { isAuthenticated, checkAuth } = useAuthStore();
@@ -45,12 +46,15 @@ export default function KeysPage() {
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedKey, setSelectedKey] = useState<ApiKey | null>(null);
+  const [groups, setGroups] = useState<ApiKeyGroup[]>([]);
+  const [filterGroupId, setFilterGroupId] = useState<number | null>(null);
 
   // Create dialog state
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
   const [newKeyQuota, setNewKeyQuota] = useState('');
   const [newKeyExpiry, setNewKeyExpiry] = useState('');
+  const [newKeyGroupId, setNewKeyGroupId] = useState<number | undefined>();
   const [isCreating, setIsCreating] = useState(false);
 
   // Edit dialog state
@@ -71,13 +75,24 @@ export default function KeysPage() {
   useEffect(() => {
     if (isAuthenticated) {
       loadKeys();
+      loadGroups();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, filterGroupId]);
+
+  const loadGroups = async () => {
+    try {
+      const response = await groupsApi.list(1, 100);
+      setGroups(response.items);
+    } catch (error) {
+      // Ignore errors for groups loading
+    }
+  };
 
   const loadKeys = async () => {
     setIsLoading(true);
     try {
-      const response = await keysApi.list(1, 100);
+      const filters = filterGroupId ? { group_id: filterGroupId } : undefined;
+      const response = await keysApi.list(1, 100, filters);
       setKeys(response.items);
     } catch (error) {
       toast.error(translate('keys.loadError'));
@@ -98,6 +113,7 @@ export default function KeysPage() {
         name: newKeyName,
         quota: newKeyQuota ? parseFloat(newKeyQuota) : undefined,
         expires_in_days: newKeyExpiry ? parseInt(newKeyExpiry) : undefined,
+        group_id: newKeyGroupId,
       };
       await keysApi.create(payload);
       toast.success(translate('keys.createSuccess'));
@@ -105,6 +121,7 @@ export default function KeysPage() {
       setNewKeyName('');
       setNewKeyQuota('');
       setNewKeyExpiry('');
+      setNewKeyGroupId(undefined);
       loadKeys();
     } catch (error: any) {
       toast.error(error.message || translate('keys.createError'));
@@ -185,14 +202,36 @@ export default function KeysPage() {
     <DashboardLayout>
       <Card className="shadow-none ring-1 ring-[#1D3025]/10 rounded-md">
         <CardHeader className="flex flex-row items-center justify-between px-4 gap-1">
-          <div>
+          <div className="flex flex-col gap-1">
             <CardTitle className="text-base font-medium text-[#1D3025]">{translate('keys.title')}</CardTitle>
             <CardDescription className="text-sm text-[#5C7064]">{translate('keys.desc')}</CardDescription>
           </div>
-          <Button variant="success" onClick={() => setCreateDialogOpen(true)}>
-            <PlusIcon className="h-4 w-4 mr-2" />
-            {translate('keys.createNew')}
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Group Filter */}
+            <div className="flex items-center gap-2">
+              <select
+                className="text-sm bg-[#FAFAFA] border border-[#D3DED8] rounded-sm px-3 py-1.5 text-[#1D3025]"
+                value={filterGroupId || ''}
+                onChange={(e) => setFilterGroupId(e.target.value ? parseInt(e.target.value) : null)}
+              >
+                <option value="">All Groups</option>
+                {groups.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
+              {filterGroupId && (
+                <Button variant="ghost" size="sm" onClick={() => setFilterGroupId(null)}>
+                  Clear
+                </Button>
+              )}
+            </div>
+            <Button variant="success" onClick={() => setCreateDialogOpen(true)}>
+              <PlusIcon className="h-4 w-4 mr-2" />
+              {translate('keys.createNew')}
+            </Button>
+          </div>
         </CardHeader>
         {isLoading ? (
           <CardContent className="flex justify-center p-20">
@@ -252,6 +291,21 @@ export default function KeysPage() {
                         <CopyIcon className="h-4 w-4 text-[#1D3025]" />
                       </Button>
                     </div>
+                  ),
+                },
+                {
+                  key: 'group',
+                  label: translate('keys.group'),
+                  mobileLabel: translate('keys.group'),
+                  render: (key) => (
+                    key.group_name ? (
+                      <Badge variant="outline" className="bg-[#F1EEE4] text-[#1D3025] border-[#D3DED8] flex items-center gap-1">
+                        <FolderIcon className="h-3 w-3" />
+                        {key.group_name}
+                      </Badge>
+                    ) : (
+                      <span className="text-[#5C7064] text-sm">-</span>
+                    )
                   ),
                 },
                 {
@@ -329,6 +383,21 @@ export default function KeysPage() {
                 value={newKeyName}
                 onChange={(e) => setNewKeyName(e.target.value)}
               />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium">{translate('keys.groupLabel')}</label>
+              <select
+                className="text-sm bg-[#FAFAFA] border border-[#D3DED8] rounded-sm px-3 py-2 text-[#1D3025]"
+                value={newKeyGroupId || ''}
+                onChange={(e) => setNewKeyGroupId(e.target.value ? parseInt(e.target.value) : undefined)}
+              >
+                <option value="">No Group</option>
+                {groups.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-sm font-medium">{translate('keys.quotaLabel')}</label>
