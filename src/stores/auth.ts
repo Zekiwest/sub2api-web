@@ -13,7 +13,7 @@
 
 import { create } from 'zustand';
 import type { User } from '@/types';
-import { getStoredUser, isAuthenticated } from '@/lib/auth';
+import { authApi, getStoredUser, isAuthenticated } from '@/lib/auth';
 
 // Mock user for development mode (no backend)
 const MOCK_USER: User = {
@@ -36,6 +36,7 @@ interface AuthState {
   setUser: (user: User | null) => void;
   logout: () => void;
   checkAuth: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -62,5 +63,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       const auth = isAuthenticated();
       set({ user: auth ? user : null, isAuthenticated: auth, isLoading: false });
     }
+  },
+  refreshUser: async () => {
+    if (isDevMode) {
+      set({ user: MOCK_USER, isAuthenticated: true, isLoading: false });
+      return;
+    }
+    const user = await authApi.getCurrentUser();
+    localStorage.setItem('auth_user', JSON.stringify(user));
+    set({ user, isAuthenticated: true, isLoading: false });
   },
 }));

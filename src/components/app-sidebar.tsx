@@ -34,6 +34,7 @@ import {
   ChartBarIcon,
   KeyIcon,
   TrendingUpIcon,
+  GiftIcon,
 } from 'lucide-react';
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
@@ -56,6 +57,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       path: '/usage',
       label: translate('header.usage'),
       icon: TrendingUpIcon,
+    },
+    {
+      path: '/redeem',
+      label: translate('header.redeem'),
+      icon: GiftIcon,
     },
   ];
 

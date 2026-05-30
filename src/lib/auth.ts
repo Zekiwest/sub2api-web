@@ -13,6 +13,8 @@
 import apiClient from '@/lib/api';
 import type { LoginRequest, RegisterRequest, AuthResponse, User, PublicSettings } from '@/types';
 
+const isDevMode = process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_API_URL;
+
 export const authApi = {
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
     const { data } = await apiClient.post<AuthResponse>('/auth/login', credentials);
@@ -54,6 +56,22 @@ export const authApi = {
   },
 
   getPublicSettings: async (): Promise<PublicSettings> => {
+    if (isDevMode) {
+      return {
+        site_name: 'Sub2API',
+        registration_enabled: true,
+        invitation_required: false,
+        invitation_code_enabled: false,
+        turnstile_enabled: false,
+        api_base_url: 'http://localhost:3000',
+        contact_info: '',
+        doc_url: '',
+        hide_ccs_import_button: false,
+        custom_endpoints: [],
+        custom_menu_items: [],
+        payment_enabled: false,
+      };
+    }
     const { data } = await apiClient.get<PublicSettings>('/settings/public');
     return data;
   },

@@ -203,7 +203,7 @@ export default function DashboardPage() {
               <CardContent className="p-4">
                 <ResponsiveContainer width="100%" height={250} minWidth={0} minHeight={40}>
                   <PieChart>
-                    <Pie data={models} dataKey="requests" nameKey="model" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                    <Pie data={models} dataKey="requests" nameKey="model" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                       {models.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                     </Pie>
                     <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px' }} />
@@ -220,7 +220,7 @@ export default function DashboardPage() {
               <CardContent className="p-4">
                 <ResponsiveContainer width="100%" height={250} minWidth={0} minHeight={40}>
                   <PieChart>
-                    <Pie data={tokenDistribution.filter((d) => d.value > 0)} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                    <Pie data={tokenDistribution.filter((d) => d.value > 0)} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                       {tokenDistribution.filter((d) => d.value > 0).map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                     </Pie>
                     <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px' }} />
@@ -242,7 +242,7 @@ export default function DashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" horizontal={false} />
                   <XAxis type="number" tick={{ fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#e5e5e5' }} />
                   <YAxis type="category" dataKey="model" tick={{ fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#e5e5e5' }} width={120} />
-                  <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px' }} formatter={(value: number) => [`$${value.toFixed(2)}`, translate('dashboard.cost')]} />
+                  <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px' }} formatter={(value) => [`$${Number(value ?? 0).toFixed(2)}`, translate('dashboard.cost')]} />
                   <Bar dataKey="cost" fill="#c91d2b" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>

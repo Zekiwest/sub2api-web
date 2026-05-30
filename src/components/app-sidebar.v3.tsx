@@ -36,6 +36,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   FolderIcon,
+  GiftIcon,
 } from 'lucide-react';
 
 interface SidebarV3Props {
@@ -56,6 +57,7 @@ export function SidebarV3({ isCollapsed, setIsCollapsed, isOpen, setIsOpen }: Si
     { path: '/keys', label: translate('header.apiKeys'), icon: KeyIcon },
     { path: '/groups', label: translate('header.groups'), icon: FolderIcon },
     { path: '/usage', label: translate('header.usage'), icon: TrendingUpIcon },
+    { path: '/redeem', label: translate('header.redeem'), icon: GiftIcon },
     { path: '/invite', label: translate('header.invite'), icon: UsersIcon },
   ];
 

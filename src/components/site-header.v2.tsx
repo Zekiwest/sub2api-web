@@ -36,6 +36,7 @@ const pageKeyMap: Record<string, string> = {
   '/dashboard': 'header.dashboard',
   '/keys': 'header.apiKeys',
   '/usage': 'header.usage',
+  '/redeem': 'header.redeem',
   '/settings': 'settings.title',
   '/invite': 'invite.title',
 };
